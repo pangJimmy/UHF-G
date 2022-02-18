@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+>
+    <group android:id="@+id/primary">
+        <item
+            android:id="@+id/nav_inventory"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/invenroty" />
+        <item
+            android:id="@+id/nav_frequency_setting"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/frequency_settings" />
+        <item
+            android:id="@+id/nav_setting"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="@string/settings" />
+    </group>
+</menu>
