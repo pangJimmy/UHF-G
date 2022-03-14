@@ -12,6 +12,12 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:dropDownListViewStyle">@style/mySpinnerStyle</item>
+    </style>
+
+    <style name="mySpinnerStyle" parent="android:style/Widget.ListView.DropDown">
+        <item name="android:divider">@color/teal_700</item>
+        <item name="android:dividerHeight">1dp</item>
     </style>
 
     <style name="Theme.UHFG.NoActionBar">
@@ -22,4 +28,34 @@
     <style name="Theme.UHFG.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.UHFG.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="spinnerHead" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:textColor">@color/colorSpinnerText</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="spinner" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <!--设置 spinner 显示位置往下偏移 actionBarSize 的高度, 默认显示是直接显示在 Spinner 的选中项的上方-->
+        <item name="android:dropDownVerticalOffset">?attr/actionBarSize</item>
+        <!--设置选中之后Item 的背景变换 设置背景为 灰色背景色-->
+        <item name="android:dropDownSelector">@color/colorWhite</item>
+        <!--设置下拉框的 list 的样式, 主要是设置 分割线, 当然也可以设置下拉的 list 的背景颜色-->
+        <item name="android:dropDownListViewStyle">@style/spinnerListStyle</item>
+        <!--设置显示在 popup 中 item(TextView) 的样式-->
+        <item name="android:dropDownItemStyle">@style/itemSpinnerStyle</item>
+    </style>
+
+    <!--设置分割线-->
+    <style name="spinnerListStyle" parent="@android:style/Widget.ListView.DropDown">
+        <item name="android:divider">#000000</item>
+        <item name="android:dividerHeight">2dp</item>
+    </style>
+
+    <!--设置文本颜色 和大小-->
+    <style name="itemSpinnerStyle" parent="@android:style/Widget.TextView.SpinnerItem">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textSize">16sp</item>
+    </style>
 </resources>

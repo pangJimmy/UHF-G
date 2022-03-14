@@ -4,15 +4,23 @@
     <group android:id="@+id/primary">
         <item
             android:id="@+id/nav_inventory"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_inventory_selected"
             android:title="@string/invenroty" />
         <item
+            android:id="@+id/nav_read_write_tag"
+            android:icon="@drawable/ic_read_write_tag"
+            android:title="@string/read_write_tag" />
+        <item
+            android:id="@+id/nav_modify_epc"
+            android:icon="@drawable/ic_modify_epc"
+            android:title="@string/modify_epc" />
+        <item
             android:id="@+id/nav_frequency_setting"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_freq_settings"
             android:title="@string/frequency_settings" />
         <item
             android:id="@+id/nav_setting"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_settings"
             android:title="@string/settings" />
     </group>
 </menu>

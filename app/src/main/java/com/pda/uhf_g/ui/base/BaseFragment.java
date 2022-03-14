@@ -16,4 +16,12 @@ public class BaseFragment extends Fragment {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show(); ;
     }
 
+    /***
+     * 提示弹窗
+     * @param resID
+     */
+    public void showToast(int resID){
+        Toast.makeText(getActivity(), resID, Toast.LENGTH_SHORT).show(); ;
+    }
+
 }

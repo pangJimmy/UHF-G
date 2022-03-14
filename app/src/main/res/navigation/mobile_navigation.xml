@@ -10,7 +10,16 @@
         android:name="com.pda.uhf_g.ui.fragment.InventoryFragment"
         android:label="@string/invenroty"
         tools:layout="@layout/fragment_inventory" />
-
+    <fragment
+        android:id="@+id/nav_read_write_tag"
+        android:name="com.pda.uhf_g.ui.fragment.ReadWriteTag"
+        android:label="@string/read_write_tag"
+        tools:layout="@layout/fragment_read_write_tag" />
+    <fragment
+        android:id="@+id/nav_modify_epc"
+        android:name="com.pda.uhf_g.ui.fragment.ModifyEPCFragment"
+        android:label="@string/modify_epc"
+        tools:layout="@layout/fragment_modify_epc" />
     <fragment
         android:id="@+id/nav_frequency_setting"
         android:name="com.pda.uhf_g.ui.fragment.FrequencySettingsFragment"

@@ -17,4 +17,141 @@
     <string name="invenroty">盘存</string>
     <string name="frequency_settings">跳频管理</string>
     <string name="settings">设置</string>
+
+    <string name="sn">SN</string>
+    <string name="tag_type">类型</string>
+    <string name="epc">EPC</string>
+    <string name="password">PASSWORD</string>
+    <string name="user">USER</string>
+    <string name="tag_count">次数</string>
+    <string name="rssi">rssi</string>
+    <string name="multi_tag">多标签</string>
+    <string name="tid">TID</string>
+    <string name="loop">连续读取</string>
+    <string name="type_6c">6C</string>
+    <string name="type_6b">6B</string>
+    <string name="type_gb">GB</string>
+    <string name="type_gjb">GJB</string>
+    <string name="all_tags">张数:</string>
+    <string name="speed">速度:</string>
+    <string name="time">时间:</string>
+    <string name="start_inventory">开始盘存</string>
+    <string name="stop_inventory">停止盘存</string>
+    <string name="cus_read">Cus读</string>
+    <string name="excel_export">excel导出</string>
+    <string name="clean">清屏</string>
+    <string name="exit_app">再按一次返回键，退出程序</string>
+    <string name="module_init_success">模块初始化成功</string>
+    <string name="module_init_fail">模块初始失败</string>
+
+    <string name="communication_timeout">通讯超时</string>
+    <string name="unknown">未知错误</string>
+    <string name="read_write_tag">读写标签</string>
+    <string name="modify_epc">修改EPC</string>
+    <string name="tag_select">标签选择:</string>
+    <string name="start_addr">起始地址(word):</string>
+    <string name="length">长度(word):</string>
+    <string name="access_password">访问密码(hex):</string>
+    <string name="data">写数据(hex):</string>
+    <string name="read_data">读数据(hex):</string>
+    <string name="read">读标签</string>
+    <string name="write">写标签</string>
+
+    <string name="lock_tag">锁定标签</string>
+    <string name="lock_data">锁定区:</string>
+    <string name="lock_type">锁定类型:</string>
+
+    <string name="lock_tips">提示:锁定标签前请先修改密码并锁定密码区，注意永久锁定标签后无法解锁，且无法写入数据</string>
+    <string name="kill_tag">销毁标签</string>
+    <string name="kill_password">销毁密码(hex):</string>
+
+    <string name="base_settings">基本参数设置</string>
+    <string name="work_freq">工作频段:</string>
+    <string name="power">输出功率:</string>
+    <string name="temperature">温度:</string>
+    <string name="inventory_settings">查询参数设置</string>
+
+    <string name="query">查询</string>
+    <string name="q_value">Q值:</string>
+    <string name="inventory_type">盘存方式:</string>
+    <string name="fastid">FastID</string>
+
+    <string-array name="work_freq">
+        <item>北美_902_928</item>
+        <item>中国1_920_925</item>
+        <item>欧洲_865_867</item>
+        <item>欧洲_865_867</item>
+    </string-array>
+
+    <!--session-->
+    <string-array name="session_arrays">
+        <item>S0</item>
+        <item>S1</item>
+        <item>S2</item>
+        <item>S3</item>
+    </string-array>
+
+    <!--盘存方式AB面-->
+    <string-array name="inventory_type_arrays">
+        <item>A面</item>
+        <item>B面</item>
+        <item>A|B面</item>
+    </string-array>
+
+    <!--Q值范围-->
+    <string-array name="q_value_arrays">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+
+    </string-array>
+
+    <!--功率范围-->
+    <string-array name="power_arrays">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>31</item>
+        <item>32</item>
+        <item>33</item>
+    </string-array>
 </resources>
