@@ -56,6 +56,8 @@
     <string name="read_data">读数据(hex):</string>
     <string name="read">读标签</string>
     <string name="write">写标签</string>
+    <string name="new_epc">新EPC(hex):</string>
+    <string name="please_input_hex_string">输入双字节长度的EPC</string>
 
     <string name="lock_tag">锁定标签</string>
     <string name="lock_data">锁定区:</string>
@@ -64,6 +66,17 @@
     <string name="lock_tips">提示:锁定标签前请先修改密码并锁定密码区，注意永久锁定标签后无法解锁，且无法写入数据</string>
     <string name="kill_tag">销毁标签</string>
     <string name="kill_password">销毁密码(hex):</string>
+    <string name="please_inventory">请先盘存标签后再进行读写操作</string>
+
+    <string name="start_address_not_null">起始地址不能为空</string>
+    <string name="len_not_null">长度不能为空</string>
+    <string name="access_password_not_null">访问密码不能为空</string>
+    <string name="read_fail">读数据失败</string>
+    <string name="write_fail">写数据失败</string>
+    <string name="write_success">写数据成功</string>
+    <string name="filter">过滤</string>
+    <string name="please_input_right_access_password">请输入4字节长度的十六进制访问密码</string>
+    <string name="please_input_right_write_data">请输入双字节位数长度的十六进制数据</string>
 
     <string name="base_settings">基本参数设置</string>
     <string name="work_freq">工作频段:</string>
@@ -76,18 +89,30 @@
     <string name="inventory_type">盘存方式:</string>
     <string name="fastid">FastID</string>
 
+    <string name="set_success">设置成功</string>
+    <string name="set_fail">设置失败</string>
+
     <string-array name="work_freq">
         <item>北美_902_928</item>
         <item>中国1_920_925</item>
         <item>欧洲_865_867</item>
-        <item>欧洲_865_867</item>
+        <item>中国2_840_845</item>
+    </string-array>
+
+
+    <!--锁定类型-->
+    <string-array name="lock_type">
+        <item>开放</item>
+        <item>锁定</item>
+        <item>永久开放</item>
+        <item>永久锁定</item>
     </string-array>
 
     <!--session-->
     <string-array name="session_arrays">
         <item>S0</item>
         <item>S1</item>
-        <item>S2</item>
+        <item>S2-多标签</item>
         <item>S3</item>
     </string-array>
 
@@ -100,10 +125,10 @@
 
     <!--Q值范围-->
     <string-array name="q_value_arrays">
-        <item>1</item>
+        <item>1-单标签</item>
         <item>2</item>
         <item>3</item>
-        <item>4</item>
+        <item>4-多标签</item>
         <item>5</item>
         <item>6</item>
         <item>7</item>
@@ -120,6 +145,7 @@
 
     <!--功率范围-->
     <string-array name="power_arrays">
+        <item>0</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>

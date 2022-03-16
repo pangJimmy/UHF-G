@@ -34,9 +34,10 @@
             <Spinner
                 android:id="@+id/spinner_work_freq"
                 android:background="@drawable/spinner_background"
+                android:minHeight="@dimen/min_height_40dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/min_height_40dp"
+
                 android:entries="@array/work_freq"
                 android:layout_weight="1"
                 />

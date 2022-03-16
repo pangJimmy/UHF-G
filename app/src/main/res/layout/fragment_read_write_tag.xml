@@ -24,13 +24,22 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:text="@string/tag_select"/>
 
         <Spinner
             android:id="@+id/spinner_epc"
+            android:background="@drawable/spinner_background"
+            android:minHeight="@dimen/min_height_40dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
+        <CheckBox
+            android:id="@+id/checkbox_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:checked="true"
+            android:text="@string/filter"/>
 
     </LinearLayout>
     <TextView
@@ -45,6 +54,7 @@
         android:layout_margin="@dimen/margin_3dp"
         android:orientation="horizontal">
         <RadioGroup
+            android:id="@+id/radio_membank"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -54,7 +64,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:checked="true"
                 android:text="@string/epc" />
             <RadioButton
                 android:id="@+id/radioButton_tid"
@@ -67,6 +76,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:text="@string/user" />
             <RadioButton
                 android:id="@+id/radioButton_password"
@@ -92,6 +102,8 @@
             android:id="@+id/editText_start_addr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text="0"
             android:minWidth="@dimen/min_height_60dp"/>
         <TextView
             android:layout_width="wrap_content"
@@ -101,6 +113,8 @@
             android:id="@+id/editText_len"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text="1"
             android:minWidth="@dimen/min_height_60dp"/>
 
     </LinearLayout>
@@ -130,7 +144,7 @@
             android:layout_height="wrap_content"
             android:text="@string/data"/>
         <EditText
-            android:id="@+id/editText_data"
+            android:id="@+id/editText_write_data"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
@@ -147,6 +161,7 @@
         <EditText
             android:id="@+id/editText_read_data"
             android:layout_width="match_parent"
+            android:padding="@dimen/margin_3dp"
             android:gravity="top"
             android:layout_height="90dp"
             android:background="@drawable/corners_background"
@@ -163,6 +178,7 @@
             android:layout_margin="@dimen/margin_3dp"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:minHeight="@dimen/min_height_60dp"
             android:layout_height="wrap_content"
             android:text="@string/read"
             />
@@ -172,6 +188,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:minHeight="@dimen/min_height_60dp"
             android:text="@string/write"
             />
         <Button
@@ -180,10 +197,48 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:minHeight="@dimen/min_height_60dp"
             android:text="@string/clean"
             />
     </LinearLayout>
 
+     <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/teal_700"
+            android:textSize="@dimen/text_size_18sp"
+            android:text="@string/modify_epc"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_3dp"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_3dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/new_epc"/>
+                    <EditText
+                        android:id="@+id/editText_new_epc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/please_input_hex_string"
+                        android:layout_weight="1"/>
+                     </LinearLayout>
+
+                <Button
+                    android:id="@+id/button_modify"
+                    android:layout_margin="@dimen/margin_3dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/modify_epc"
+                    android:minHeight="@dimen/min_height_60dp"
+                    />
+            </LinearLayout>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -204,9 +259,12 @@
             <Spinner
                 android:id="@+id/sipnner_lock_data"
                 android:layout_margin="@dimen/margin_3dp"
-                android:layout_width="wrap_content"
+                android:background="@drawable/spinner_background"
+                android:minHeight="@dimen/min_height_40dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                />
+                android:layout_weight="1" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -223,8 +281,11 @@
             <Spinner
                 android:id="@+id/sipnner_lock_type"
                 android:layout_margin="@dimen/margin_3dp"
-                android:layout_width="wrap_content"
+                android:background="@drawable/spinner_background"
+                android:minHeight="@dimen/min_height_40dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:entries="@array/lock_type"
                 />
         </LinearLayout>
         <LinearLayout
@@ -247,6 +308,7 @@
                 android:layout_gravity="right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="@dimen/min_height_60dp"
                 android:text="@string/lock_tag"
                 />
         </LinearLayout>
@@ -264,6 +326,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_3dp"
+            android:layout_marginBottom="@dimen/min_height_40dp"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
@@ -280,6 +343,7 @@
                 android:layout_gravity="right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="@dimen/min_height_60dp"
                 android:text="@string/kill_tag"
                 />
         </LinearLayout>

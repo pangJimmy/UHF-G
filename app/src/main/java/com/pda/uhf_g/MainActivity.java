@@ -13,6 +13,7 @@ import com.gg.reader.api.protocol.gx.MsgAppGetReaderInfo;
 import com.gg.reader.api.utils.ThreadPoolUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.handheld.uhfr.UHFRManager;
+import com.pda.uhf_g.entity.TagInfo;
 import com.pda.uhf_g.util.CheckCommunication;
 import com.pda.uhf_g.util.GlobalClient;
 import com.pda.uhf_g.util.LogUtil;
@@ -29,6 +30,11 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import cn.pda.serialport.SerialPort;
 
 public class MainActivity extends AppCompatActivity implements NavigationView. OnNavigationItemSelectedListener{
@@ -42,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
     public UHFRManager mUhfrManager;//uhf
     private SharedPreferences mSharedPreferences;
 
-
+    public List<String> listEPC = new ArrayList<>();//epc数据
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

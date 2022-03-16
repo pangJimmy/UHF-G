@@ -243,7 +243,10 @@ public class InventoryFragment extends BaseFragment {
                     Map<String, TagInfo> infoMap = pooled6cData(taginfo);
                     tagInfoList.clear();
                     tagInfoList.addAll(infoMap.values());
-                    LogUtil.e("EPC = "  + Tools.Bytes2HexString(taginfo.EpcId, taginfo.EpcId.length) + "\n");
+                    //将EPC数据作为全局变量
+                    mainActivity.listEPC.clear();
+                    mainActivity.listEPC.addAll(infoMap.keySet());
+//                    LogUtil.e("EPC = "  + Tools.Bytes2HexString(taginfo.EpcId, taginfo.EpcId.length) + "\n");
 //                    LogUtil.e("TID = "  + Tools.Bytes2HexString(taginfo.EmbededData, taginfo.EmbededData.length));
                 }
                 handler.sendEmptyMessage(MSG_INVENROTY);
@@ -472,9 +475,32 @@ public class InventoryFragment extends BaseFragment {
             inventoryEPC();
         }else{
             stopInventory() ;
+            setEnabled(true) ;
         }
 
     }
+
+    /**
+     * 盘存期间其他勾选设置为不可用
+     */
+    private void setEnabled(boolean isEnable) {
+        checkBoxLoop.setEnabled(isEnable);
+        checkBoxLoop.setEnabled(isEnable);
+        checkBoxMultiTag.setEnabled(isEnable);
+        checkBoxTid.setEnabled(isEnable);
+        radioGroup.setEnabled(isEnable);
+    }
+
+    /***
+     * 恢复设置可用
+     */
+//    private void setEnable() {
+//        checkBoxLoop.setFocusable(true);
+//        checkBoxMultiTag.setFocusable(true);
+//        checkBoxTid.setFocusable(true);
+//        radioGroup.setFocusable(true);
+//    }
+
 
     /***盘存EPC***/
     private void inventoryEPC() {
@@ -491,7 +517,7 @@ public class InventoryFragment extends BaseFragment {
     /**停止盘存**/
     private void stopInventory() {
         if (mainActivity.isConnectUHF) {
-            //多标签
+            //多标签，多标签模式默认设置Session2, Q值为4
             if (checkBoxMultiTag.isChecked()) {
                 mUhfrManager.asyncStopReading();
             }
@@ -509,14 +535,16 @@ public class InventoryFragment extends BaseFragment {
         if (checkBoxLoop.isChecked()) {
             //连续盘存
             btnInventory.setText(R.string.stop_inventory);
+            setEnabled(false) ;
         }
         if (checkBoxMultiTag.isChecked()) {
             //多标签读取
             mUhfrManager.setGen2session(true);
             mUhfrManager.asyncStartReading();
         }
-        //启动盘存线程
+        //计时器
         computedSpeed() ;
+        //启动盘存线程
         handler.postDelayed(invenrotyThread, 0);
     }
 
@@ -554,7 +582,7 @@ public class InventoryFragment extends BaseFragment {
             }
         };
         //延迟一秒执行
-        handler.postDelayed(timeTask, 0); //新版本 可能为0
+        handler.postDelayed(timeTask, 0);
     }
 
 

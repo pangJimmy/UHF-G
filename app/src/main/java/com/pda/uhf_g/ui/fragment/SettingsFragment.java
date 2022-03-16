@@ -67,10 +67,12 @@ public class SettingsFragment extends BaseFragment {
 
 
 
-    private Reader.Region_Conf workFreq ;
+    private Reader.Region_Conf workFreq ;    //工作频率
+    private int power = 33; //输出功率
     private UHFRManager uhfrManager ;
     private MainActivity mainActivity;
 
+    Reader.READER_ERR err ;
     public SettingsFragment() {
         // Required empty public constructor
     }
@@ -94,7 +96,11 @@ public class SettingsFragment extends BaseFragment {
             spinnerWorkFreq.setSelection(1);
         }else if(region == Reader.Region_Conf.RG_EU3){
             //欧洲865_867
-            spinnerWorkFreq.setSelection(1);
+            spinnerWorkFreq.setSelection(2);
+        }else if(region == Reader.Region_Conf.RG_PRC2){
+            //中国2_840_845
+            spinnerWorkFreq.setSelection(2);
+
         }
 
 
@@ -105,9 +111,14 @@ public class SettingsFragment extends BaseFragment {
      */
     @OnClick(R.id.button_query_power)
     void queryPower() {
+        if (!mainActivity.isConnectUHF) {
+            showToast(R.string.communication_timeout);
+            return ;
+        }
         int [] powerArray = uhfrManager.getPower() ;
         if (powerArray != null && powerArray.length > 0) {
             LogUtil.e("powerArray = " + powerArray[0]) ;
+            spinnerPower.setSelection(powerArray[0]);
         }
     }
 
@@ -129,6 +140,25 @@ public class SettingsFragment extends BaseFragment {
         int session = uhfrManager.getGen2session() ;
         LogUtil.e("session = " + session) ;
 
+    }
+
+
+    /**
+     * 设置输出功率
+     */
+    @OnClick(R.id.button_set_power)
+    void setPower() {
+        if (!mainActivity.isConnectUHF) {
+            showToast(R.string.communication_timeout);
+            return ;
+        }
+        err = uhfrManager.setPower(power, power);
+        if(err== Reader.READER_ERR.MT_OK_ERR){
+            showToast(R.string.set_success);
+        }else{
+            //5101 仅支持30db
+            showToast(R.string.set_fail);
+        }
     }
 
 
@@ -168,10 +198,31 @@ public class SettingsFragment extends BaseFragment {
                         workFreq = Reader.Region_Conf.RG_NA ;
                         break;
                     case 1:
-
+                        //中国1_920_925
+                        workFreq = Reader.Region_Conf.RG_PRC ;
+                        break;
+                    case 2:
+                        //欧洲865_867
+                        workFreq = Reader.Region_Conf.RG_EU3 ;
+                        break;
+                    case 3:
+                        //中国2_840_845
+                        workFreq = Reader.Region_Conf.RG_PRC2 ;
                         break;
 
                 }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        //输出功率
+        spinnerPower.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                power = position ;
             }
 
             @Override
