@@ -261,6 +261,7 @@
                 android:layout_margin="@dimen/margin_3dp"
                 android:background="@drawable/spinner_background"
                 android:minHeight="@dimen/min_height_40dp"
+                android:entries="@array/lock_data"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
@@ -296,9 +297,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:text="@string/access_password"/>
             <EditText
                 android:id="@+id/editText_lock_password"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minWidth="100dp"/>

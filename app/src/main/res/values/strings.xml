@@ -75,8 +75,14 @@
     <string name="write_fail">写数据失败</string>
     <string name="write_success">写数据成功</string>
     <string name="filter">过滤</string>
-    <string name="please_input_right_access_password">请输入4字节长度的十六进制访问密码</string>
+    <string name="please_input_right_access_password">请输入4字节长度的十六进制密码</string>
     <string name="please_input_right_write_data">请输入双字节位数长度的十六进制数据</string>
+
+    <string name="lock_success">锁定成功</string>
+    <string name="lock_fail">锁定失败</string>
+
+    <string name="kill_success">销毁成功</string>
+    <string name="kill_fail">销毁失败</string>
 
     <string name="base_settings">基本参数设置</string>
     <string name="work_freq">工作频段:</string>
@@ -101,10 +107,18 @@
 
 
     <!--锁定类型-->
+    <string-array name="lock_data">
+        <item>访问密码</item>
+        <item>销毁密码</item>
+        <item>EPC区</item>
+        <item>TID区</item>
+        <item>USER区</item>
+    </string-array>
+
+    <!--锁定类型-->
     <string-array name="lock_type">
         <item>开放</item>
         <item>锁定</item>
-        <item>永久开放</item>
         <item>永久锁定</item>
     </string-array>
 

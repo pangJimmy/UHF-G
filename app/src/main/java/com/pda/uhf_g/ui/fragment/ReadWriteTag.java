@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,9 +87,19 @@ public class ReadWriteTag extends BaseFragment {
     private int startAddr ;
     private int len ;
     private byte[] accessPassword ;
+    private byte[] killPassword ;
 
     private boolean isEPCNULL = true ;
 
+
+    private final int UNLOCK = 0 ;//开放
+    private final int LOCK = 1 ;//锁定
+    private final int PERM_LOCK = 0 ;//永久锁定
+
+
+    Reader.Lock_Obj lock_obj = null;//lock bank
+    Reader.Lock_Type lock_type = null;//lock bank
+    int lockTypeInt ;//lock type
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -126,6 +137,7 @@ public class ReadWriteTag extends BaseFragment {
             }
         });
 
+        //数据区选择
         radioGroupMembank.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -151,6 +163,64 @@ public class ReadWriteTag extends BaseFragment {
                 }
             }
         });
+
+        //锁定区选择
+        spinnerLockData.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position){
+                    case 0:
+                        lock_obj = Reader.Lock_Obj.LOCK_OBJECT_ACCESS_PASSWD;
+                        break;
+                    case 1:
+                        lock_obj = Reader.Lock_Obj.LOCK_OBJECT_KILL_PASSWORD;
+                        break;
+                    case 2:
+                        lock_obj = Reader.Lock_Obj.LOCK_OBJECT_BANK1;//epc
+                        break;
+                    case 3:
+                        lock_obj = Reader.Lock_Obj.LOCK_OBJECT_BANK2;//TID
+                        break;
+                    case 4:
+                        lock_obj = Reader.Lock_Obj.LOCK_OBJECT_BANK3;//USER
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                lock_obj = Reader.Lock_Obj.LOCK_OBJECT_ACCESS_PASSWD;
+            }
+        });
+
+        //锁定类型选择
+        spinnerLockType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position){
+                    case 0:
+                        lockTypeInt = UNLOCK;
+                        break;
+                    case 1:
+                        lockTypeInt = LOCK;
+                        break;
+                    case 2:
+                        lockTypeInt = PERM_LOCK;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                lock_obj = Reader.Lock_Obj.LOCK_OBJECT_ACCESS_PASSWD;
+            }
+        });
+
+
     }
 
     /***
@@ -214,7 +284,133 @@ public class ReadWriteTag extends BaseFragment {
      */
     @OnClick(R.id.button_lock)
     void lock() {
+        if (isEPCNULL) {
+            showToast(R.string.please_inventory);
+            return ;
+        }
+        String accessStr = editTextAccessPassword.getText().toString().trim() ;
+        //访问密码不能为空
+        if (accessStr == null || accessStr.length() == 0) {
+            showToast(R.string.access_password_not_null);
+            return;
+        }
+        //检验访问密码是否为4字节十六进制数据
+        if (!matchHex(accessStr) || accessStr.length() != 8) {
+            showToast(R.string.please_input_right_access_password);
+        }
+        byte[] epc = Tools.HexString2Bytes(epcStr);
+        accessPassword = Tools.HexString2Bytes(accessStr);
+        getLockType();
+        Reader.READER_ERR er;
 
+        if (checkBoxFilter.isChecked())
+            //fbank: 1 epc,2 tid ,3 user, 一般使用EPC过滤即选择对应的EPC号的标签进行读写
+            er  = mUhfrManager.lockTagByFilter(lock_obj,lock_type,accessPassword,(short)1000,epc,1,2,true);
+        else
+            er  = mUhfrManager.lockTag(lock_obj,lock_type,accessPassword,(short)1000);
+        if (er== Reader.READER_ERR.MT_OK_ERR) {
+            showToast("Lock Success!");
+//			editTips.append("Lock Success!" + "\n");
+        } else {
+            showToast("Lock Fail!");
+//			editTips.append("Lock Fail!" + "\n");
+        }
+    }
+
+
+
+    private void getLockType() {
+        if(lock_obj== Reader.Lock_Obj.LOCK_OBJECT_ACCESS_PASSWD)
+        {
+
+            if(lockTypeInt==UNLOCK)
+                lock_type= Reader.Lock_Type.ACCESS_PASSWD_UNLOCK;
+            else if(lockTypeInt==LOCK)
+                lock_type= Reader.Lock_Type.ACCESS_PASSWD_LOCK;
+            else if(lockTypeInt==PERM_LOCK)
+                lock_type= Reader.Lock_Type.ACCESS_PASSWD_PERM_LOCK;
+
+        }
+        else if(lock_obj== Reader.Lock_Obj.LOCK_OBJECT_KILL_PASSWORD)
+        {
+
+            if(lockTypeInt==UNLOCK)
+                lock_type= Reader.Lock_Type.KILL_PASSWORD_UNLOCK;
+            else if(lockTypeInt==LOCK)
+                lock_type= Reader.Lock_Type.KILL_PASSWORD_LOCK;
+            else if(lockTypeInt==PERM_LOCK)
+                lock_type= Reader.Lock_Type.KILL_PASSWORD_PERM_LOCK;
+        }
+        else if(lock_obj == Reader.Lock_Obj./*LOCK_OBJECT_EPC*/LOCK_OBJECT_BANK2)
+        {
+
+            if(lockTypeInt==UNLOCK)
+                lock_type= Reader.Lock_Type.BANK2_UNLOCK;
+            else if(lockTypeInt==LOCK)
+                lock_type= Reader.Lock_Type.BANK2_LOCK;
+            else if(lockTypeInt==PERM_LOCK)
+                lock_type= Reader.Lock_Type.BANK2_PERM_LOCK;
+        }
+        else if(lock_obj == Reader.Lock_Obj.LOCK_OBJECT_BANK1)
+        {
+
+            if(lockTypeInt==UNLOCK)
+                lock_type= Reader.Lock_Type.BANK1_UNLOCK;
+            else if(lockTypeInt==LOCK)
+                lock_type= Reader.Lock_Type.BANK1_LOCK;
+            else if(lockTypeInt==PERM_LOCK)
+                lock_type= Reader.Lock_Type.BANK1_PERM_LOCK;
+        }
+        else if(lock_obj== Reader.Lock_Obj.LOCK_OBJECT_BANK3)
+        {
+
+            if(lockTypeInt==UNLOCK)
+                lock_type= Reader.Lock_Type.BANK3_UNLOCK;
+            else if(lockTypeInt==LOCK)
+                lock_type= Reader.Lock_Type.BANK3_LOCK;
+            else if(lockTypeInt==PERM_LOCK)
+                lock_type= Reader.Lock_Type.BANK3_PERM_LOCK;
+        }
+
+    }
+
+
+    /***
+     * 销毁标签
+     */
+    @OnClick(R.id.button_kill)
+    void kill() {
+        if (isEPCNULL) {
+            showToast(R.string.please_inventory);
+            return ;
+        }
+        String killStr = editTextKillPassword.getText().toString().trim() ;
+        //访问密码不能为空
+        if (killStr == null || killStr.length() == 0) {
+            showToast(R.string.access_password_not_null);
+            return;
+        }
+        //检验密码是否为4字节十六进制数据
+        if (!matchHex(killStr) || killStr.length() != 8) {
+            showToast(R.string.please_input_right_access_password);
+        }
+        byte[] epc = Tools.HexString2Bytes(epcStr);
+        killPassword = Tools.HexString2Bytes(killStr);
+        Reader.READER_ERR er ;
+        //kill tag
+        if (checkBoxFilter.isChecked())
+            er= mUhfrManager.killTagByFilter(killPassword,(short) 1000,epc,1,2,true);
+        else
+            er = mUhfrManager.killTag(killPassword,(short) 1000);
+        if(er == Reader.READER_ERR.MT_OK_ERR) {
+            showToast(R.string.kill_success);
+            //editTips.append(selectEPC + getResources().getString(R.string.kill) + getResources().getString(R.string.success)+"\n");
+        }else{
+            showToast(R.string.kill_fail);
+            //Log.e("kill fail",er.toString());
+            //editTips.append(selectEPC + getResources().getString(R.string.kill) + getResources().getString(R.string.fail)+"\n");
+
+        }
     }
 
     /****
