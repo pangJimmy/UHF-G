@@ -2,9 +2,6 @@ package com.pda.uhf_g.ui.fragment;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,7 +79,7 @@ public class ReadWriteTag extends BaseFragment {
 
     private UHFRManager mUhfrManager;
     private MainActivity mainActivity;
-    private String epcStr ;
+    private String epcStr = null ;
     private int membank ;
     private int startAddr ;
     private int len ;
@@ -123,6 +120,9 @@ public class ReadWriteTag extends BaseFragment {
         if (mainActivity.listEPC != null && mainActivity.listEPC.size() > 0) {
             spinnerEPC.setAdapter(new ArrayAdapter<String>(mainActivity, android.R.layout.simple_spinner_dropdown_item, mainActivity.listEPC));
             isEPCNULL = false ;
+        }else{
+            epcStr = null ;
+            isEPCNULL = true ;
         }
         spinnerEPC.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -133,7 +133,7 @@ public class ReadWriteTag extends BaseFragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                epcStr = mainActivity.listEPC.get(0) ;
             }
         });
 
@@ -228,7 +228,9 @@ public class ReadWriteTag extends BaseFragment {
      */
     @OnClick(R.id.button_read)
     void readData() {
-        checkParam(false);
+        if(!checkParam(false)){
+            return ;
+        }
         byte[] readData = new byte[len * 2];
         byte[] epc = Tools.HexString2Bytes(epcStr);
         Reader.READER_ERR er = Reader.READER_ERR.MT_OK_ERR;
@@ -253,7 +255,9 @@ public class ReadWriteTag extends BaseFragment {
      */
     @OnClick(R.id.button_write)
     void write() {
-        checkParam(true) ;
+        if(!checkParam(true)){
+            return ;
+        }
         String writeDataStr = editTextWriteData.getText().toString().trim() ;
         if(writeDataStr == null || !matchHex(writeDataStr) || writeDataStr.length() % 4 != 0){
             showToast(R.string.please_input_right_write_data);
@@ -279,6 +283,57 @@ public class ReadWriteTag extends BaseFragment {
 
     }
 
+    /**
+     * 修改EPC
+     */
+    @OnClick(R.id.button_modify)
+    void modifyEPC() {
+        if (isEPCNULL) {
+            showToast(R.string.please_inventory);
+            return ;
+        }
+        String newEPC = editTextNewEPC.getText().toString().trim() ;
+        String accessStr = editTextAccessPassword.getText().toString().trim() ;
+        //访问不能为空
+        if (accessStr == null || accessStr.length() == 0) {
+            showToast(R.string.access_password_not_null);
+            return;
+        }
+        //检验访问密码是否为4字节十六进制数据
+        if (!matchHex(accessStr) || accessStr.length() != 8) {
+            showToast(R.string.please_input_right_access_password);
+            return ;
+        }
+        //检验新epc是否为4的整数倍长度十六进制数据
+        if (!matchHex(newEPC) || newEPC.length()% 4 != 0) {
+            showToast(R.string.please_input_right_epc);
+            return ;
+        }
+        accessPassword = Tools.HexString2Bytes(accessStr);
+
+        //EPC区：CRC+PC+EPC号,写入新的EPC需要修改PC+EPC，所以起始地址为1,SDK内部已经计算好PC
+//        String pcStr = ComputedPc.getPc(ComputedPc.getEPCLength(editTextNewEPC));
+//        String writeData = pcStr + newEPC ;
+        byte[] writeDataBytes = Tools.HexString2Bytes(newEPC );
+        byte[] epc = Tools.HexString2Bytes(epcStr);
+        Reader.READER_ERR er ;
+        if (checkBoxFilter.isChecked()){
+            //fbank: 1 epc,2 tid ,3 user, 一般使用EPC过滤即选择对应的EPC号的标签进行读写, 起始地址为1
+            er = mUhfrManager.writeTagDataByFilter((char)1,1,writeDataBytes,writeDataBytes.length,accessPassword,(short)1000,epc,1,2,true);
+        }else{
+            er = mUhfrManager.writeTagData((char)1,1,writeDataBytes,writeDataBytes.length,accessPassword,(short)1000);
+        }
+        if(er== Reader.READER_ERR.MT_OK_ERR ){
+            //写入成功
+            showToast(R.string.modify_success);
+        }else{
+            //写入失败
+            showToast(R.string.modify_fail);
+        }
+
+
+    }
+
     /****
      * 锁定操作
      */
@@ -297,6 +352,7 @@ public class ReadWriteTag extends BaseFragment {
         //检验访问密码是否为4字节十六进制数据
         if (!matchHex(accessStr) || accessStr.length() != 8) {
             showToast(R.string.please_input_right_access_password);
+            return;
         }
         byte[] epc = Tools.HexString2Bytes(epcStr);
         accessPassword = Tools.HexString2Bytes(accessStr);
@@ -375,6 +431,7 @@ public class ReadWriteTag extends BaseFragment {
     }
 
 
+
     /***
      * 销毁标签
      */
@@ -423,10 +480,10 @@ public class ReadWriteTag extends BaseFragment {
 
 
     //检查读写参数
-    private void checkParam(boolean isWrite) {
+    private boolean checkParam(boolean isWrite) {
         if (isEPCNULL) {
             showToast(R.string.please_inventory);
-            return ;
+            return false;
         }
         String startAddrStr = editTextStartAddr.getText().toString().trim() ;
         String lenStr = editTextLen.getText().toString().trim();
@@ -434,27 +491,29 @@ public class ReadWriteTag extends BaseFragment {
         //起始地址不能为空
         if (startAddrStr == null || startAddrStr.length() == 0) {
             showToast(R.string.start_address_not_null);
-            return;
+            return false;
         }
         //访问不能为空
         if (accessStr == null || accessStr.length() == 0) {
             showToast(R.string.access_password_not_null);
-            return;
+            return false;
         }
         if(!isWrite){
             //长度不能为空
             if (lenStr == null || lenStr.length() == 0) {
                 showToast(R.string.len_not_null);
-                return;
+                return false;
             }
             len = Integer.valueOf(lenStr);
         }
         //检验访问密码是否为4字节十六进制数据
         if (!matchHex(accessStr) || accessStr.length() != 8) {
             showToast(R.string.please_input_right_access_password);
+            return false;
         }
         startAddr = Integer.valueOf(startAddrStr);
         accessPassword = Tools.HexString2Bytes(accessStr);
+        return true ;
     }
 
     /**

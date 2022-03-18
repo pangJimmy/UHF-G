@@ -77,7 +77,10 @@
     <string name="filter">过滤</string>
     <string name="please_input_right_access_password">请输入4字节长度的十六进制密码</string>
     <string name="please_input_right_write_data">请输入双字节位数长度的十六进制数据</string>
+    <string name="please_input_right_epc">请输入4的整数倍长度的十六进制新EPC</string>
 
+    <string name="modify_success">新EPC号修改成功，请重新盘存测试</string>
+    <string name="modify_fail">修改写入失败</string>
     <string name="lock_success">锁定成功</string>
     <string name="lock_fail">锁定失败</string>
 
@@ -95,8 +98,13 @@
     <string name="inventory_type">盘存方式:</string>
     <string name="fastid">FastID</string>
 
+    <string name="query_success">查询成功</string>
+    <string name="query_fail">查询失败</string>
     <string name="set_success">设置成功</string>
     <string name="set_fail">设置失败</string>
+
+    <string name="store">存储</string>
+    <string name="export_excel_need_permission">导出excel所需权限</string>
 
     <string-array name="work_freq">
         <item>北美_902_928</item>

@@ -1,9 +1,11 @@
 package com.pda.uhf_g.ui.fragment;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,7 +17,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pda.serialport.Tools;
+import me.weyye.hipermission.HiPermission;
+import me.weyye.hipermission.PermissionCallback;
+import me.weyye.hipermission.PermissionItem;
 
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -29,6 +35,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.gg.reader.api.protocol.gx.LogBaseGbInfo;
 import com.handheld.uhfr.UHFRManager;
 import com.pda.uhf_g.MainActivity;
 import com.pda.uhf_g.R;
@@ -36,13 +43,16 @@ import com.pda.uhf_g.adapter.RecycleViewAdapter;
 import com.pda.uhf_g.entity.TagInfo;
 import com.pda.uhf_g.ui.base.BaseFragment;
 import com.pda.uhf_g.util.CheckCommunication;
+import com.pda.uhf_g.util.ExcelUtil;
 import com.pda.uhf_g.util.GlobalClient;
 import com.pda.uhf_g.util.LogUtil;
 import com.pda.uhf_g.util.UtilSound;
 import com.uhf.api.cls.Reader;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -225,38 +235,62 @@ public class InventoryFragment extends BaseFragment {
         public void run() {
             LogUtil.e("invenrotyThread is running");
             List<Reader.TAGINFO> listTag = null;
-            if (checkBoxMultiTag.isChecked()) {
-                listTag = mUhfrManager.tagInventoryRealTime();
-            }else{
-                if (checkBoxTid.isChecked()) {
-                    //盘存时带TID
-                    listTag = mUhfrManager.tagEpcTidInventoryByTimer((short) 20) ;
+            List<LogBaseGbInfo> listGBTag ;
+            //6C标签
+            if(radioButton6C.isChecked()){
+                //多标签盘存
+                if (checkBoxMultiTag.isChecked()) {
+                    listTag = mUhfrManager.tagInventoryRealTime();
                 }else{
-                    listTag = mUhfrManager.tagInventoryByTimer((short) 20); ;
+                    if (checkBoxTid.isChecked()) {
+                        //盘存时带TID
+                        listTag = mUhfrManager.tagEpcTidInventoryByTimer((short) 20) ;
+                    }else{
+                        listTag = mUhfrManager.tagInventoryByTimer((short) 20); ;
+                    }
                 }
-            }
-            //盘存列表
-            if (listTag != null && listTag.size() > 0) {
+                //盘存列表
+                if (listTag != null && listTag.size() > 0) {
 
-                for (Reader.TAGINFO taginfo : listTag) {
-                    //去除重复的EPC号
-                    Map<String, TagInfo> infoMap = pooled6cData(taginfo);
-                    tagInfoList.clear();
-                    tagInfoList.addAll(infoMap.values());
-                    //将EPC数据作为全局变量
-                    mainActivity.listEPC.clear();
-                    mainActivity.listEPC.addAll(infoMap.keySet());
+                    for (Reader.TAGINFO taginfo : listTag) {
+                        //去除重复的EPC号
+                        Map<String, TagInfo> infoMap = pooled6cData(taginfo);
+                        tagInfoList.clear();
+                        tagInfoList.addAll(infoMap.values());
+                        //将EPC数据作为全局变量
+                        mainActivity.listEPC.clear();
+                        mainActivity.listEPC.addAll(infoMap.keySet());
 //                    LogUtil.e("EPC = "  + Tools.Bytes2HexString(taginfo.EpcId, taginfo.EpcId.length) + "\n");
 //                    LogUtil.e("TID = "  + Tools.Bytes2HexString(taginfo.EmbededData, taginfo.EmbededData.length));
+                    }
+                    handler.sendEmptyMessage(MSG_INVENROTY);
+                }else{
+                    //多标签状态重置
+                    if(checkBoxMultiTag.isChecked()){
+                        mUhfrManager.asyncStopReading();
+                        mUhfrManager.asyncStartReading();
+                    }
                 }
-                handler.sendEmptyMessage(MSG_INVENROTY);
-            }else{
-                //多标签状态重置
-                if(checkBoxMultiTag.isChecked()){
-                    mUhfrManager.asyncStopReading();
-                    mUhfrManager.asyncStartReading();
+            } else if (radioButtonGB.isChecked()) {
+                //国标标签
+                listGBTag = mUhfrManager.inventoryGBTag(checkBoxTid.isChecked(), (short) 20);
+                //盘存列表
+                if (listGBTag != null && listGBTag.size() > 0) {
+                    LogUtil.e("listGBTag size = "+ listGBTag.size());
+                    for (LogBaseGbInfo taginfo : listGBTag) {
+                        //去除重复的EPC号
+                        Map<String, TagInfo> infoMap = pooledGbData(taginfo);
+                        tagInfoList.clear();
+                        tagInfoList.addAll(infoMap.values());
+                        //将EPC数据作为全局变量
+                        mainActivity.listEPC.clear();
+                        mainActivity.listEPC.addAll(infoMap.keySet());
+                    }
+                    handler.sendEmptyMessage(MSG_INVENROTY);
                 }
             }
+
+
             //是否连续盘存
             if (checkBoxLoop.isChecked()) {
                 handler.postDelayed(invenrotyThread, 0) ;
@@ -406,29 +440,31 @@ public class InventoryFragment extends BaseFragment {
 //    }
 //
 //    //去重GB
-//    public Map<String, TagInfo> pooledGbData(LogBaseGbInfo info) {
-//        if (tagInfoMap.containsKey(info.getTid() + info.getEpc())) {
-//            TagInfo tagInfo = tagInfoMap.get(info.getTid() + info.getEpc());
-//            Long count = tagInfoMap.get(info.getTid() + info.getEpc()).getCount();
-//            count++;
-//            tagInfo.setRssi(info.getRssi() + "");
-//            tagInfo.setCount(count);
-//            tagInfoMap.put(info.getTid() + info.getEpc(), tagInfo);
-//        } else {
-//            TagInfo tag = new TagInfo();
-//            tag.setIndex(index);
-//            tag.setType("GB");
-//            tag.setEpc(info.getEpc());
-//            tag.setCount(1l);
-//            tag.setUserData(info.getUserdata());
-//            tag.setTid(info.getTid());
-//            tag.setRssi(info.getRssi() + "");
-//            tagInfoMap.put(info.getTid() + info.getEpc(), tag);
-//            index++;
-//        }
-////        handlerStop.sendEmptyMessage(2);
-//        return tagInfoMap;
-//    }
+    public Map<String, TagInfo> pooledGbData(LogBaseGbInfo info) {
+        String gbepc = info.getEpc() ;
+        if (tagInfoMap.containsKey(gbepc)) {
+            TagInfo tagInfo = tagInfoMap.get(gbepc);
+            Long count = tagInfoMap.get(gbepc).getCount();
+            count++;
+            tagInfo.setRssi(info.getRssi() + "");
+            tagInfo.setCount(count);
+            tagInfoMap.put(gbepc, tagInfo);
+            LogUtil.e("count = " + count);
+        } else {
+            TagInfo tag = new TagInfo();
+            tag.setIndex(index);
+            tag.setType("GB");
+            tag.setEpc(info.getEpc());
+            tag.setCount(1l);
+            tag.setUserData(info.getUserdata());
+            tag.setTid(info.getTid());
+            tag.setRssi(info.getRssi() + "");
+            tagInfoMap.put(gbepc, tag);
+            index++;
+        }
+//        handlerStop.sendEmptyMessage(2);
+        return tagInfoMap;
+    }
     /**
      * 获取UHF模块版本信息，根据版本号信息，判定模块支持哪些标签
      */
@@ -461,6 +497,7 @@ public class InventoryFragment extends BaseFragment {
     @OnClick(R.id.button_clean)
     public void clear() {
         initPane();
+        mainActivity.listEPC.clear();
     }
 
     /***盘存EPC***/
@@ -475,7 +512,6 @@ public class InventoryFragment extends BaseFragment {
             inventoryEPC();
         }else{
             stopInventory() ;
-            setEnabled(true) ;
         }
 
     }
@@ -489,6 +525,11 @@ public class InventoryFragment extends BaseFragment {
         checkBoxMultiTag.setEnabled(isEnable);
         checkBoxTid.setEnabled(isEnable);
         radioGroup.setEnabled(isEnable);
+        btnExcel.setEnabled(isEnable);
+        radioButton6C.setEnabled(isEnable);
+        radioButton6B.setEnabled(isEnable);
+        radioButtonGB.setEnabled(isEnable);
+        radioButtonGJB.setEnabled(isEnable);
     }
 
     /***
@@ -511,6 +552,9 @@ public class InventoryFragment extends BaseFragment {
             inventory6C() ;
         }else if(radioGroup.getCheckedRadioButtonId() == R.id.type_b){
             //盘存6B标签
+        } else if (radioGroup.getCheckedRadioButtonId() == R.id.type_gb) {
+            //盘存国标标签
+            inventoryGB();
         }
     }
 
@@ -528,6 +572,7 @@ public class InventoryFragment extends BaseFragment {
         } else {
             showToast(R.string.communication_timeout);
         }
+        setEnabled(true) ;
     }
 
     /***盘存6C标签**/
@@ -542,6 +587,20 @@ public class InventoryFragment extends BaseFragment {
             mUhfrManager.setGen2session(true);
             mUhfrManager.asyncStartReading();
         }
+        //计时器
+        computedSpeed() ;
+        //启动盘存线程
+        handler.postDelayed(invenrotyThread, 0);
+    }
+
+    /***盘存国标标签**/
+    private void inventoryGB() {
+        if (checkBoxLoop.isChecked()) {
+            //连续盘存
+            btnInventory.setText(R.string.stop_inventory);
+            setEnabled(false) ;
+        }
+
         //计时器
         computedSpeed() ;
         //启动盘存线程
@@ -592,6 +651,89 @@ public class InventoryFragment extends BaseFragment {
         time = time * 1000;
         String hms = formatter.format(time);
         return hms;
+    }
+
+
+    /**
+     * 将数据集合 转化成ArrayList<ArrayList<String>>
+     *
+     * @return
+     */
+    private ArrayList<ArrayList<String>> getRecordData(List<TagInfo> infos) {
+        ArrayList<ArrayList<String>> recordList = new ArrayList<>();
+        for (int i = 0; i < infos.size(); i++) {
+            ArrayList<String> beanList = new ArrayList<String>();
+            TagInfo info = infos.get(i);
+            beanList.add(info.getIndex() + "");
+            beanList.add(info.getType());
+            beanList.add(info.getEpc() != null ? info.getEpc() : "");
+            beanList.add(info.getTid() != null ? info.getTid() : "");
+            beanList.add(info.getUserData() != null ? info.getUserData() : "");
+            beanList.add(info.getReservedData() != null ? info.getReservedData() : "");
+            beanList.add(info.getCount() + "");
+//            beanList.add(dateFormat.format(info.getReadTime()));
+            recordList.add(beanList);
+        }
+        return recordList;
+    }
+
+    public void notifySystemToScan(String filePath) {
+        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File file = new File(filePath);
+        Uri uri = Uri.fromFile(file);
+        intent.setData(uri);
+        mainActivity.sendBroadcast(intent);
+    }
+
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+
+    @OnClick(R.id.button_excel)
+    public void fab_excel() {
+        if (!isReader) {
+            List<PermissionItem> permissonItems = new ArrayList<PermissionItem>();
+            permissonItems.add(new PermissionItem(Manifest.permission.WRITE_EXTERNAL_STORAGE, mainActivity.getResources().getString(R.string.store), me.weyye.hipermission.R.drawable.permission_ic_storage));
+            HiPermission.create(mainActivity)
+                    .title(mainActivity.getResources().getString(R.string.export_excel_need_permission))
+                    .permissions(permissonItems)
+                    .checkMutiPermission(new PermissionCallback() {
+                        @Override
+                        public void onClose() {
+                            Log.e("onClose", "onClose");
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            Log.e("onFinish", "onFinish");
+                            String filePath = Environment.getExternalStorageDirectory() + "/Download/";
+                            String fileName = "Tag_" + dateFormat.format(new Date()) + ".xls";
+                            String[] title = {"Index", "Type", "EPC", "TID", "UserData", "ReservedData", "TotalCount"};//, "ReadTime"
+                            if (tagInfoList.size() > 0) {
+                                try {
+                                    ExcelUtil.initExcel(filePath, fileName, title);
+                                    ExcelUtil.writeObjListToExcel(getRecordData(tagInfoList), filePath + fileName, this);
+                                    showToast("Export success " + "Path=" + filePath + fileName);
+                                    notifySystemToScan(filePath + fileName);
+                                } catch (Exception ex) {
+                                    showToast("Export Failed");
+                                }
+                            } else {
+                                showToast("No Data");
+                            }
+                        }
+
+                        @Override
+                        public void onDeny(String permission, int position) {
+                            Log.e("onDeny", "onDeny");
+                        }
+
+                        @Override
+                        public void onGuarantee(String permission, int position) {
+                            Log.e("onGuarantee", "onGuarantee");
+                        }
+                    });
+        } else {
+//            ToastUtils.showText(getResources().getString(R.string.read_card_being));
+        }
     }
 
     @Override
@@ -673,12 +815,10 @@ public class InventoryFragment extends BaseFragment {
                         break;
                     case KeyEvent.KEYCODE_F2:
                         break;
+                    case KeyEvent.KEYCODE_F5:
                     case KeyEvent.KEYCODE_F3:
                         break;
                     case KeyEvent.KEYCODE_F4://6100
-                        break;
-                    case KeyEvent.KEYCODE_F5:
-                        break;
                     case KeyEvent.KEYCODE_F7://H3100
                         invenroty();
                         break;

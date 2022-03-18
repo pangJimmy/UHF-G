@@ -18,6 +18,7 @@ import com.pda.uhf_g.util.CheckCommunication;
 import com.pda.uhf_g.util.GlobalClient;
 import com.pda.uhf_g.util.LogUtil;
 import com.pda.uhf_g.util.ScanUtil;
+import com.pda.uhf_g.util.SharedUtil;
 import com.uhf.api.cls.Reader;
 
 import androidx.annotation.NonNull;
@@ -123,13 +124,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
         mUhfrManager = UHFRManager.getInstance();// Init Uhf module
         if(mUhfrManager!=null){
             //5106和6106 /6107和6108 支持33db
-            Reader.READER_ERR err = mUhfrManager.setPower(mSharedPreferences.getInt("readPower",33), mSharedPreferences.getInt("writePower",33));//set uhf module power
+            SharedUtil sharedUtil = new SharedUtil(this);
+            Reader.READER_ERR err = mUhfrManager.setPower(sharedUtil.getPower(), sharedUtil.getPower());//set uhf module power
             if(err== Reader.READER_ERR.MT_OK_ERR){
                 isConnectUHF = true ;
-                mUhfrManager.setRegion(Reader.Region_Conf.valueOf(mSharedPreferences.getInt("freRegion", 1)));
-                Toast.makeText(getApplicationContext(),"FreRegion:"+Reader.Region_Conf.valueOf(mSharedPreferences.getInt("freRegion",1))+
-                        "\n"+"Read Power:"+mSharedPreferences.getInt("readPower",33)+
-                        "\n"+"Write Power:"+mSharedPreferences.getInt("writePower",33),Toast.LENGTH_LONG).show();
+                //初始设置为北美902_928工作频率
+                mUhfrManager.setRegion(Reader.Region_Conf.valueOf(sharedUtil.getWorkFreq()));
+                Toast.makeText(getApplicationContext(),"FreRegion:"+Reader.Region_Conf.valueOf(sharedUtil.getWorkFreq())+
+                        "\n"+"Read Power:"+sharedUtil.getPower()+
+                        "\n"+"Write Power:"+sharedUtil.getPower(),Toast.LENGTH_LONG).show();
             }else {
                 //5101 支持30db
                 Reader.READER_ERR err1 = mUhfrManager.setPower(30, 30);//set uhf module power

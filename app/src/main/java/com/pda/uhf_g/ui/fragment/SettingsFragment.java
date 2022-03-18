@@ -1,5 +1,7 @@
 package com.pda.uhf_g.ui.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -23,6 +25,7 @@ import com.pda.uhf_g.MainActivity;
 import com.pda.uhf_g.R;
 import com.pda.uhf_g.ui.base.BaseFragment;
 import com.pda.uhf_g.util.LogUtil;
+import com.pda.uhf_g.util.SharedUtil;
 import com.uhf.api.cls.Reader;
 
 /**
@@ -54,6 +57,8 @@ public class SettingsFragment extends BaseFragment {
     Button buttonQueryInventory;
     @BindView(R.id.button_set_inventory)
     Button buttonSetInventory;
+
+    private SharedPreferences mSharedPreferences;
     //工作频率
     private String[] arrayWorkFreq ;
     //Session
@@ -72,6 +77,7 @@ public class SettingsFragment extends BaseFragment {
     private UHFRManager uhfrManager ;
     private MainActivity mainActivity;
 
+    private SharedUtil sharedUtil ;
     Reader.READER_ERR err ;
     public SettingsFragment() {
         // Required empty public constructor
@@ -86,23 +92,29 @@ public class SettingsFragment extends BaseFragment {
             showToast(R.string.communication_timeout);
             return ;
         }
+        String workFreqStr = "" ;
         Reader.Region_Conf region = uhfrManager.getRegion() ;
         LogUtil.e("workFraq = " + region.value()) ;
         if(region == Reader.Region_Conf.RG_NA){
             //北美902_928
             spinnerWorkFreq.setSelection(0);
+            workFreqStr = arrayWorkFreq[0];
         }else if(region == Reader.Region_Conf.RG_PRC){
             //中国1_920_925
             spinnerWorkFreq.setSelection(1);
+            workFreqStr = arrayWorkFreq[1];
         }else if(region == Reader.Region_Conf.RG_EU3){
             //欧洲865_867
             spinnerWorkFreq.setSelection(2);
+            workFreqStr = arrayWorkFreq[2];
         }else if(region == Reader.Region_Conf.RG_PRC2){
             //中国2_840_845
-            spinnerWorkFreq.setSelection(2);
+            spinnerWorkFreq.setSelection(3);
+            workFreqStr = arrayWorkFreq[3];
 
         }
 
+        showToast(mainActivity.getResources().getString(R.string.work_freq)  + workFreqStr);
 
     }
 
@@ -119,6 +131,9 @@ public class SettingsFragment extends BaseFragment {
         if (powerArray != null && powerArray.length > 0) {
             LogUtil.e("powerArray = " + powerArray[0]) ;
             spinnerPower.setSelection(powerArray[0]);
+            showToast(mainActivity.getResources().getString(R.string.power)  + powerArray[0] + "dB");
+        }else{
+            showToast(R.string.query_fail) ;
         }
     }
 
@@ -155,6 +170,26 @@ public class SettingsFragment extends BaseFragment {
         err = uhfrManager.setPower(power, power);
         if(err== Reader.READER_ERR.MT_OK_ERR){
             showToast(R.string.set_success);
+            sharedUtil.savePower(power);
+        }else{
+            //5101 仅支持30db
+            showToast(R.string.set_fail);
+        }
+    }
+
+    /**
+     * 设置工作频率
+     */
+    @OnClick(R.id.button_set_work_freq)
+    void setWorkFreq() {
+        if (!mainActivity.isConnectUHF) {
+            showToast(R.string.communication_timeout);
+            return ;
+        }
+        err = uhfrManager.setRegion(workFreq);
+        if(err== Reader.READER_ERR.MT_OK_ERR){
+            showToast(R.string.set_success);
+            sharedUtil.savePower(workFreq.value());
         }else{
             //5101 仅支持30db
             showToast(R.string.set_fail);
@@ -186,6 +221,21 @@ public class SettingsFragment extends BaseFragment {
         arrayPower = mainActivity.getResources().getStringArray(R.array.power_arrays);
         arrayQvalue = mainActivity.getResources().getStringArray(R.array.q_value_arrays);
         arrayInventoryType = mainActivity.getResources().getStringArray(R.array.inventory_type_arrays);
+
+        sharedUtil = new SharedUtil(mainActivity);
+        //获取保存的设置
+        spinnerPower.setSelection(sharedUtil.getPower());
+        int freq = sharedUtil.getWorkFreq() ;
+        if(Reader.Region_Conf.valueOf(freq) == Reader.Region_Conf.RG_NA){
+            spinnerWorkFreq.setSelection(0);
+        }else if(Reader.Region_Conf.valueOf(freq) == Reader.Region_Conf.RG_PRC){
+            spinnerWorkFreq.setSelection(1);
+        }else if(Reader.Region_Conf.valueOf(freq) == Reader.Region_Conf.RG_EU3){
+            spinnerWorkFreq.setSelection(2);
+        }else if(Reader.Region_Conf.valueOf(freq) == Reader.Region_Conf.RG_PRC2){
+            spinnerWorkFreq.setSelection(3);
+        }
+
 
         //工作频率
         spinnerWorkFreq.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
