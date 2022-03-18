@@ -103,6 +103,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="number"
+            android:singleLine="true"
             android:text="0"
             android:minWidth="@dimen/min_height_60dp"/>
         <TextView
@@ -114,6 +115,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="number"
+            android:singleLine="true"
             android:text="1"
             android:minWidth="@dimen/min_height_60dp"/>
 
@@ -131,6 +133,7 @@
             android:id="@+id/editText_access_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:singleLine="true"
             android:text="00000000"
             android:minWidth="100dp"/>
     </LinearLayout>
@@ -147,6 +150,7 @@
             android:id="@+id/editText_write_data"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:singleLine="true"
             android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout
@@ -227,6 +231,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:hint="@string/please_input_hex_string"
+                        android:singleLine="true"
                         android:layout_weight="1"/>
                      </LinearLayout>
 
@@ -339,6 +344,7 @@
                 android:id="@+id/editText_kill_password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
                 android:minWidth="100dp"/>
             <Button
                 android:id="@+id/button_kill"

@@ -166,6 +166,36 @@
                     android:layout_weight="1"
                     android:entries="@array/session_arrays"
                     />
+                <Button
+                    android:id="@+id/button_query_session"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/min_height_60dp"
+                    android:layout_margin="3dp"
+                    android:textSize="@dimen/text_size_18sp"
+                    android:text="@string/query"
+                    />
+                <Button
+                    android:id="@+id/button_set_session"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/min_height_60dp"
+                    android:layout_margin="3dp"
+                    android:textSize="@dimen/text_size_18sp"
+                    android:text="@string/settings"
+                    />
+
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_3dp"
+                android:orientation="horizontal">
+
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -183,9 +213,27 @@
                     android:layout_weight="1"
                     android:entries="@array/q_value_arrays"
                     />
+                <Button
+                    android:id="@+id/button_query_qvalue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/min_height_60dp"
+                    android:layout_margin="3dp"
+                    android:textSize="@dimen/text_size_18sp"
+                    android:text="@string/query"
+                    />
+                <Button
+                    android:id="@+id/button_set_qvalue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/min_height_60dp"
+                    android:layout_margin="3dp"
+                    android:textSize="@dimen/text_size_18sp"
+                    android:text="@string/settings"
+                    />
+
 
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -202,39 +250,24 @@
                     android:background="@drawable/spinner_background"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:minHeight="@dimen/min_height_40dp"
                     android:minWidth="@dimen/min_width_100dp"
                     android:entries="@array/inventory_type_arrays"
                     />
-
-                <CheckBox
+                <Button
+                    android:id="@+id/button_query_inventory_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/min_height_40dp"
-                    android:layout_weight="1"
-                    android:text="@string/fastid"/>
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_3dp"
-                android:orientation="horizontal">
-                <Button
-                    android:id="@+id/button_query_inventory"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:minHeight="@dimen/min_height_60dp"
                     android:layout_margin="3dp"
                     android:textSize="@dimen/text_size_18sp"
                     android:text="@string/query"
                     />
                 <Button
-                    android:id="@+id/button_set_inventory"
-                    android:layout_width="0dp"
+                    android:id="@+id/button_set_inventory_type"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:minHeight="@dimen/min_height_60dp"
                     android:layout_margin="3dp"
                     android:textSize="@dimen/text_size_18sp"
@@ -242,6 +275,22 @@
                     />
 
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_3dp"
+                android:orientation="horizontal">
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/min_height_40dp"
+                    android:text="@string/fastid"/>
+            </LinearLayout>
+
+
+
+
+
 
         </LinearLayout>
 

@@ -53,9 +53,9 @@ public class SettingsFragment extends BaseFragment {
     Button buttonQueryPower;
     @BindView(R.id.button_set_power)
     Button buttonSetPower;
-    @BindView(R.id.button_query_inventory)
+    @BindView(R.id.button_query_inventory_type)
     Button buttonQueryInventory;
-    @BindView(R.id.button_set_inventory)
+    @BindView(R.id.button_set_inventory_type)
     Button buttonSetInventory;
 
     private SharedPreferences mSharedPreferences;
@@ -74,11 +74,14 @@ public class SettingsFragment extends BaseFragment {
 
     private Reader.Region_Conf workFreq ;    //工作频率
     private int power = 33; //输出功率
+    private int session = 1; //session
+    private int qvalue = 1;//Q值
     private UHFRManager uhfrManager ;
     private MainActivity mainActivity;
 
     private SharedUtil sharedUtil ;
     Reader.READER_ERR err ;
+
     public SettingsFragment() {
         // Required empty public constructor
     }
@@ -137,6 +140,45 @@ public class SettingsFragment extends BaseFragment {
         }
     }
 
+    /**
+     * 查询session
+     */
+    @OnClick(R.id.button_query_session)
+    void querySession() {
+        if (!mainActivity.isConnectUHF) {
+            showToast(R.string.communication_timeout);
+            return ;
+        }
+        int session = uhfrManager.getGen2session();
+        if (session != -1) {
+            spinnerSession.setSelection(session);
+            showToast( "Session"+ session);
+        }else {
+            showToast(R.string.query_fail) ;
+        }
+        LogUtil.e("session = " + session) ;
+
+    }
+
+    /**
+     * 查询Q值
+     */
+    @OnClick(R.id.button_query_qvalue)
+    void queryQvalue() {
+        if (!mainActivity.isConnectUHF) {
+            showToast(R.string.communication_timeout);
+            return ;
+        }
+        int qvalue = uhfrManager.getQvalue() ;
+        if (qvalue > 0) {
+            spinnerQvalue.setSelection((qvalue -1));
+            showToast( "Q = "+ qvalue);
+        }else{
+            showToast(R.string.query_fail) ;
+        }
+        LogUtil.e("qvalue = " + qvalue) ;
+    }
+
     /***
      * 查询温度
      */
@@ -150,7 +192,7 @@ public class SettingsFragment extends BaseFragment {
     /**
      * 查询盘存参数
      */
-    @OnClick(R.id.button_query_inventory)
+    @OnClick(R.id.button_query_inventory_type)
     void queryInventory() {
         int session = uhfrManager.getGen2session() ;
         LogUtil.e("session = " + session) ;
@@ -196,6 +238,43 @@ public class SettingsFragment extends BaseFragment {
         }
     }
 
+    /**
+     * 设置session
+     */
+    @OnClick(R.id.button_set_session)
+    void setSession() {
+        if (!mainActivity.isConnectUHF) {
+            showToast(R.string.communication_timeout);
+            return ;
+        }
+        boolean flag = uhfrManager.setGen2session(session);
+        if (flag) {
+            showToast(R.string.set_success);
+            sharedUtil.saveSession(session);
+        }else{
+            showToast(R.string.set_fail);
+        }
+    }
+
+
+    /**
+     * 设置Q值
+     */
+    @OnClick(R.id.button_set_session)
+    void setQvalue() {
+        if (!mainActivity.isConnectUHF) {
+            showToast(R.string.communication_timeout);
+            return ;
+        }
+        boolean flag = uhfrManager.setQvaule(qvalue);
+        if (flag) {
+            showToast(R.string.set_success);
+            sharedUtil.saveQvalue(qvalue);
+        }else{
+            showToast(R.string.set_fail);
+        }
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -235,6 +314,8 @@ public class SettingsFragment extends BaseFragment {
         }else if(Reader.Region_Conf.valueOf(freq) == Reader.Region_Conf.RG_PRC2){
             spinnerWorkFreq.setSelection(3);
         }
+        spinnerSession.setSelection(sharedUtil.getSession());
+        spinnerQvalue.setSelection((sharedUtil.getQvalue() - 1));
 
 
         //工作频率
@@ -280,5 +361,32 @@ public class SettingsFragment extends BaseFragment {
 
             }
         });
+
+        //session
+        spinnerSession.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                session = position ;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        //Q值
+        spinnerQvalue.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                qvalue = position ;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
     }
 }

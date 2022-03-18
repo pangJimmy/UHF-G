@@ -40,12 +40,47 @@ public class SharedUtil {
         editor.commit() ;
     }
 
-
     /***
      * 获取功率
      * @return
      */
     public int getPower() {
         return mSharedPreferences.getInt("power",33);
+    }
+
+    /***
+     * 保存session
+     * @param session
+     */
+    public void saveSession(int session) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit() ;
+        editor.putInt("session", session);
+        editor.commit() ;
+    }
+
+    /***
+     * 获取session
+     * @return
+     */
+    public int getSession() {
+        return mSharedPreferences.getInt("session",0);
+    }
+
+    /***
+     * 保存Q值
+     * @param qvalue
+     */
+    public void saveQvalue(int qvalue) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit() ;
+        editor.putInt("qvalue", qvalue);
+        editor.commit() ;
+    }
+
+    /***
+     * 获取Q值
+     * @return
+     */
+    public int getQvalue() {
+        return mSharedPreferences.getInt("qvalue",1);
     }
 }
