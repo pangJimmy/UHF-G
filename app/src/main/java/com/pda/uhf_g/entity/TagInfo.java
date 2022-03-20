@@ -17,6 +17,7 @@ public class TagInfo implements Serializable {
     private Integer ltu31;
     private String moisture;
     private int ctesius;
+    private boolean isShowTid ;
 
     public TagInfo() {
     }
@@ -139,6 +140,14 @@ public class TagInfo implements Serializable {
 
     public void setCtesius(int ctesius) {
         this.ctesius = ctesius;
+    }
+
+    public boolean getIsShowTid() {
+        return isShowTid;
+    }
+
+    public void setIsShowTid(boolean isShowTid) {
+        this.isShowTid = isShowTid;
     }
 
     @Override

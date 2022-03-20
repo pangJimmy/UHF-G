@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
@@ -64,6 +65,8 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
         TextView ltu31_data;
         TextView epcData;
         TextView ctesius_data;
+        LinearLayout layoutTid ;
+        TextView tvTid ;
 
         public ViewHolder(final View view) {
             super(view);
@@ -81,6 +84,9 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
 //            ltu31_data = (TextView) view.findViewById(R.id.ltu31_data);
 //            epcData = (TextView) view.findViewById(R.id.epcBank_data);
             ctesius_data = (TextView) view.findViewById(R.id.ctesius_data);
+
+            layoutTid = (LinearLayout) view.findViewById(R.id.layout_tid);
+            tvTid = (TextView) view.findViewById(R.id.tv_tid) ;
         }
     }
 
@@ -176,6 +182,12 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
         holder.tid.setText(tag.getTid());
         holder.rssi.setText(tag.getRssi());
         holder.count.setText(tag.getCount().toString());
+        if (tag.getIsShowTid()) {
+            holder.layoutTid.setVisibility(View.VISIBLE);
+            holder.tvTid.setText(tag.getTid());
+        }else{
+            holder.layoutTid.setVisibility(View.GONE);
+        }
 
         if (getThisPosition() != null && position == getThisPosition()) {
             holder.itemView.setBackgroundColor(Color.rgb(135, 206, 235));

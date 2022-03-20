@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
@@ -58,6 +60,9 @@ public class SettingsFragment extends BaseFragment {
     @BindView(R.id.button_set_inventory_type)
     Button buttonSetInventory;
 
+    @BindView(R.id.checkbox_fastid)
+    CheckBox checkBoxFastid;
+
     private SharedPreferences mSharedPreferences;
     //工作频率
     private String[] arrayWorkFreq ;
@@ -76,6 +81,7 @@ public class SettingsFragment extends BaseFragment {
     private int power = 33; //输出功率
     private int session = 1; //session
     private int qvalue = 1;//Q值
+    private int target = 0 ; //A|B面
     private UHFRManager uhfrManager ;
     private MainActivity mainActivity;
 
@@ -170,7 +176,7 @@ public class SettingsFragment extends BaseFragment {
             return ;
         }
         int qvalue = uhfrManager.getQvalue() ;
-        if (qvalue > 0) {
+        if (qvalue != -1) {
             spinnerQvalue.setSelection((qvalue -1));
             showToast( "Q = "+ qvalue);
         }else{
@@ -185,17 +191,27 @@ public class SettingsFragment extends BaseFragment {
     @OnClick(R.id.button_query_temp)
     void queryTemp() {
         int temp = uhfrManager.getTemperature() ;
-        LogUtil.e("temp = " + temp) ;
+//        LogUtil.e("temp = " + temp) ;
 //        uhfrManager.get
     }
 
     /**
-     * 查询盘存参数
+     * 查询盘存参数AB面
      */
     @OnClick(R.id.button_query_inventory_type)
     void queryInventory() {
-        int session = uhfrManager.getGen2session() ;
-        LogUtil.e("session = " + session) ;
+        if (!mainActivity.isConnectUHF) {
+            showToast(R.string.communication_timeout);
+            return ;
+        }
+        target = uhfrManager.getTarget() ;
+        LogUtil.e("Target = " + target) ;
+        if (target != -1) {
+            spinnerInventoryType.setSelection(target);
+            showToast( mainActivity.getResources().getString(R.string.inventory_type)+ arrayInventoryType[target]);
+        }else{
+            showToast(R.string.query_fail) ;
+        }
 
     }
 
@@ -260,7 +276,7 @@ public class SettingsFragment extends BaseFragment {
     /**
      * 设置Q值
      */
-    @OnClick(R.id.button_set_session)
+    @OnClick(R.id.button_set_qvalue)
     void setQvalue() {
         if (!mainActivity.isConnectUHF) {
             showToast(R.string.communication_timeout);
@@ -270,6 +286,25 @@ public class SettingsFragment extends BaseFragment {
         if (flag) {
             showToast(R.string.set_success);
             sharedUtil.saveQvalue(qvalue);
+        }else{
+            showToast(R.string.set_fail);
+        }
+    }
+
+
+    /**
+     * 设置Target
+     */
+    @OnClick(R.id.button_set_inventory_type)
+    void setTarget() {
+        if (!mainActivity.isConnectUHF) {
+            showToast(R.string.communication_timeout);
+            return ;
+        }
+        boolean flag = uhfrManager.setTarget(target);
+        if (flag) {
+            showToast(R.string.set_success);
+            sharedUtil.saveTarget(target);
         }else{
             showToast(R.string.set_fail);
         }
@@ -379,12 +414,20 @@ public class SettingsFragment extends BaseFragment {
         spinnerQvalue.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                qvalue = position ;
+                qvalue = position + 1;
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
+            }
+        });
+
+        //fastid
+        checkBoxFastid.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                uhfrManager.setFastID(b);
             }
         });
 

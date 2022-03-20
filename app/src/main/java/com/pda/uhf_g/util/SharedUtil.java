@@ -83,4 +83,22 @@ public class SharedUtil {
     public int getQvalue() {
         return mSharedPreferences.getInt("qvalue",1);
     }
+
+    /***
+     * 保存target
+     * @param target
+     */
+    public void saveTarget(int target) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit() ;
+        editor.putInt("target", target);
+        editor.commit() ;
+    }
+
+    /***
+     * 获取target
+     * @return
+     */
+    public int getTarget() {
+        return mSharedPreferences.getInt("target",1);
+    }
 }

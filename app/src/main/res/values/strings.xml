@@ -202,4 +202,38 @@
         <item>32</item>
         <item>33</item>
     </string-array>
+
+
+    <!--国标标签操作区域-->
+    <string-array name="gb_membank">
+        <item>标签编码区</item>
+        <item>标签安全区</item>
+        <item>User0</item>
+        <item>User1</item>
+        <item>User2</item>
+        <item>User3</item>
+        <item>User4</item>
+        <item>User5</item>
+        <item>User6</item>
+        <item>User7</item>
+        <item>User8</item>
+        <item>User9</item>
+        <item>User10</item>
+        <item>User11</item>
+        <item>User12</item>
+        <item>User13</item>
+        <item>User14</item>
+        <item>User15</item>
+    </string-array>
+
+    <!--国标标签锁定类型-->
+    <string-array name="gb_lock_type" >
+        <item>可读可写</item>
+        <item>可读不可写</item>
+        <item>不可读可写</item>
+        <item>不可读不可写</item>
+        <item>安全模式1</item>
+        <item>安全模式2</item>
+        <item>安全模式3</item>
+    </string-array>
 </resources>

@@ -50,6 +50,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
     private SharedPreferences mSharedPreferences;
 
     public List<String> listEPC = new ArrayList<>();//epc数据
+    public static final int TAG_6C = 0 ;
+    public static final int TAG_6B = 1 ;
+    public static final int TAG_GB = 2 ;
+    public static final int TAG_GJB = 3 ;
+    public int tagType = 0 ; //标签类型
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +85,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
             @Override
             public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments)
             {
-
+                //目标Fragment
+                LogUtil.e("destination = " + destination.getNavigatorName());
             }
         });
     }

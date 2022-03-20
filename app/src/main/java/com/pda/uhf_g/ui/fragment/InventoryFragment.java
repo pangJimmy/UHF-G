@@ -35,6 +35,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.gg.reader.api.protocol.gx.LogBaseGJbInfo;
 import com.gg.reader.api.protocol.gx.LogBaseGbInfo;
 import com.handheld.uhfr.UHFRManager;
 import com.pda.uhf_g.MainActivity;
@@ -209,6 +210,7 @@ public class InventoryFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         Log.e("pang", "onResume()");
+        mUhfrManager.setCancleInventoryFilter();
         //注册按键
         registerKeyCodeReceiver();
         //getModuleInfo() ;
@@ -236,6 +238,7 @@ public class InventoryFragment extends BaseFragment {
             LogUtil.e("invenrotyThread is running");
             List<Reader.TAGINFO> listTag = null;
             List<LogBaseGbInfo> listGBTag ;
+            List<LogBaseGJbInfo> listGJBTag ;
             //6C标签
             if(radioButton6C.isChecked()){
                 //多标签盘存
@@ -265,6 +268,7 @@ public class InventoryFragment extends BaseFragment {
                     }
                     handler.sendEmptyMessage(MSG_INVENROTY);
                 }else{
+                    LogUtil.e("listTag = null");
                     //多标签状态重置
                     if(checkBoxMultiTag.isChecked()){
                         mUhfrManager.asyncStopReading();
@@ -288,102 +292,37 @@ public class InventoryFragment extends BaseFragment {
                     }
                     handler.sendEmptyMessage(MSG_INVENROTY);
                 }
+            }else if(radioButtonGJB.isChecked()){
+                //国军标标签
+                listGJBTag = mUhfrManager.inventoryGJBTag(checkBoxTid.isChecked(), (short) 20);
+                //盘存列表
+                if (listGJBTag != null && listGJBTag.size() > 0) {
+                    LogUtil.e("listGJBTag size = "+ listGJBTag.size());
+                    for (LogBaseGJbInfo taginfo : listGJBTag) {
+                        //去除重复的EPC号
+                        Map<String, TagInfo> infoMap = pooledGJbData(taginfo);
+                        tagInfoList.clear();
+                        tagInfoList.addAll(infoMap.values());
+                        //将EPC数据作为全局变量
+                        mainActivity.listEPC.clear();
+                        mainActivity.listEPC.addAll(infoMap.keySet());
+                    }
+                    handler.sendEmptyMessage(MSG_INVENROTY);
+                }
             }
 
 
             //是否连续盘存
             if (checkBoxLoop.isChecked()) {
                 handler.postDelayed(invenrotyThread, 0) ;
+            }else{
+                isReader = false ;
             }
 
         }
     } ;
 
 
-
-    //订阅
-//    public void subHandler(GClient client) {
-//        client.onTagEpcLog = new HandlerTagEpcLog() {
-//            public void log(String readerName, LogBaseEpcInfo info) {
-//                if (null != info && 0 == info.getResult()) {
-////                    if (isSound)
-////                        UtilSound.play(1, 0);
-////                    System.out.println(info);
-//                    mainActivity.runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            Map<String, TagInfo> infoMap = pooled6cData(info);
-//                            tagInfoList.clear();
-//                            tagInfoList.addAll(infoMap.values());
-//                        }
-//                    });
-//                }
-//            }
-//        };
-//        client.onTagEpcOver = new HandlerTagEpcOver() {
-//            public void log(String readerName, LogBaseEpcOver info) {
-//                handlerStop.sendEmptyMessage(new Message().what = 1);
-//            }
-//        };
-//        client.onTag6bLog = new HandlerTag6bLog() {
-//            public void log(String readerName, LogBase6bInfo info) {
-////                System.out.println(info);
-//                //带上userData一起读则返回result与userData
-//                if (null != info && info.getResult() == 0) {
-////                    if (isSound)
-////                        UtilSound.play(1, 0);
-//                    mainActivity.runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            Map<String, TagInfo> infoMap = pooled6bData(info);
-//                            tagInfoList.clear();
-//                            tagInfoList.addAll(infoMap.values());
-//                        }
-//                    });
-//                }
-//            }
-//        };
-//        client.onTag6bOver = new HandlerTag6bOver() {
-//            public void log(String readerName, LogBase6bOver info) {
-//                handlerStop.sendEmptyMessage(new Message().what = 1);
-//            }
-//        };
-//        client.onTagGbLog = new HandlerTagGbLog() {
-//            public void log(String readerName, LogBaseGbInfo info) {
-////                System.out.println(info);
-//                if (null != info && info.getResult() == 0) {
-////                    if (isSound)
-////                        UtilSound.play(1, 0);
-//                    mainActivity.runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            Map<String, TagInfo> infoMap = pooledGbData(info);
-//                            tagInfoList.clear();
-//                            tagInfoList.addAll(infoMap.values());
-//                        }
-//                    });
-//                }
-//
-//            }
-//        };
-//        client.onTagGbOver = new HandlerTagGbOver() {
-//            public void log(String readerName, LogBaseGbOver info) {
-//                handlerStop.sendEmptyMessage(new Message().what = 1);
-//            }
-//        };
-//        client.onGpiOver = new HandlerGpiOver() {
-//            @Override
-//            public void log(String s, LogAppGpiOver logAppGpiOver) {
-//                System.out.println(logAppGpiOver);
-//            }
-//        };
-//        client.onGpiStart = new HandlerGpiStart() {
-//            @Override
-//            public void log(String s, LogAppGpiStart logAppGpiStart) {
-//                System.out.println(logAppGpiStart);
-//            }
-//        };
-//    }
 
 
     //去重6C
@@ -396,6 +335,10 @@ public class InventoryFragment extends BaseFragment {
             count++;
             tagInfo.setRssi(info.RSSI + "");
             tagInfo.setCount(count);
+            tagInfo.setIsShowTid(checkBoxTid.isChecked());
+            if (info.EmbededData != null && info.EmbededDatalen > 0) {
+                tagInfo.setTid(Tools.Bytes2HexString(info.EmbededData, info.EmbededDatalen));
+            }
             tagInfoMap.put(epcAndTid, tagInfo);
         } else {
             TagInfo tag = new TagInfo();
@@ -403,8 +346,9 @@ public class InventoryFragment extends BaseFragment {
             tag.setType("6C");
             tag.setEpc(Tools.Bytes2HexString(info.EpcId, info.EpcId.length));
             tag.setCount(1l);
-            if (info.EmbededData != null) {
-                tag.setTid(Tools.Bytes2HexString(info.EmbededData, info.EmbededData.length));
+            tag.setIsShowTid(checkBoxTid.isChecked());
+            if (info.EmbededData != null && info.EmbededDatalen > 0) {
+                tag.setTid(Tools.Bytes2HexString(info.EmbededData, info.EmbededDatalen));
             }
             tag.setRssi(info.RSSI + "");
             tagInfoMap.put(epcAndTid, tag);
@@ -441,6 +385,33 @@ public class InventoryFragment extends BaseFragment {
 //
 //    //去重GB
     public Map<String, TagInfo> pooledGbData(LogBaseGbInfo info) {
+        String gbepc = info.getEpc() ;
+        if (tagInfoMap.containsKey(gbepc)) {
+            TagInfo tagInfo = tagInfoMap.get(gbepc);
+            Long count = tagInfoMap.get(gbepc).getCount();
+            count++;
+            tagInfo.setRssi(info.getRssi() + "");
+            tagInfo.setCount(count);
+            tagInfoMap.put(gbepc, tagInfo);
+            LogUtil.e("count = " + count);
+        } else {
+            TagInfo tag = new TagInfo();
+            tag.setIndex(index);
+            tag.setType("GB");
+            tag.setEpc(info.getEpc());
+            tag.setCount(1l);
+            tag.setUserData(info.getUserdata());
+            tag.setTid(info.getTid());
+            tag.setRssi(info.getRssi() + "");
+            tagInfoMap.put(gbepc, tag);
+            index++;
+        }
+//        handlerStop.sendEmptyMessage(2);
+        return tagInfoMap;
+    }
+
+    //    //去重GJB
+    public Map<String, TagInfo> pooledGJbData(LogBaseGJbInfo info) {
         String gbepc = info.getEpc() ;
         if (tagInfoMap.containsKey(gbepc)) {
             TagInfo tagInfo = tagInfoMap.get(gbepc);
@@ -552,8 +523,9 @@ public class InventoryFragment extends BaseFragment {
             inventory6C() ;
         }else if(radioGroup.getCheckedRadioButtonId() == R.id.type_b){
             //盘存6B标签
-        } else if (radioGroup.getCheckedRadioButtonId() == R.id.type_gb) {
-            //盘存国标标签
+        } else if (radioGroup.getCheckedRadioButtonId() == R.id.type_gb
+                || radioGroup.getCheckedRadioButtonId() == R.id.type_gjb) {
+            //盘存国标标签或者国军标
             inventoryGB();
         }
     }
@@ -586,6 +558,8 @@ public class InventoryFragment extends BaseFragment {
             //多标签读取
             mUhfrManager.setGen2session(true);
             mUhfrManager.asyncStartReading();
+        }else{
+            mUhfrManager.setGen2session(false);
         }
         //计时器
         computedSpeed() ;
@@ -600,7 +574,6 @@ public class InventoryFragment extends BaseFragment {
             btnInventory.setText(R.string.stop_inventory);
             setEnabled(false) ;
         }
-
         //计时器
         computedSpeed() ;
         //启动盘存线程
@@ -771,6 +744,7 @@ public class InventoryFragment extends BaseFragment {
                 radioButton6B.setVisibility(View.VISIBLE);
                 radioButtonGB.setVisibility(View.GONE);
                 radioButtonGJB.setVisibility(View.GONE);
+
                 break ;
             case VERSION_GJB:
                 radioButton6B.setVisibility(View.GONE);
@@ -781,11 +755,13 @@ public class InventoryFragment extends BaseFragment {
                 radioButton6B.setVisibility(View.GONE);
                 radioButtonGB.setVisibility(View.VISIBLE);
                 radioButtonGJB.setVisibility(View.GONE);
+
                 break ;
             case VERSION_GB_GJB:
                 radioButton6B.setVisibility(View.GONE);
                 radioButtonGB.setVisibility(View.VISIBLE);
                 radioButtonGJB.setVisibility(View.VISIBLE);
+
                 break ;
             case VERSION_6C:
             default:
@@ -794,6 +770,28 @@ public class InventoryFragment extends BaseFragment {
                 radioButtonGJB.setVisibility(View.GONE);
                 break;
         }
+
+        //选择要操作的标签类型
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (radioGroup.getCheckedRadioButtonId()){
+                    case R.id.type_c:
+                        mainActivity.tagType = mainActivity.TAG_6C ;
+                        break;
+                    case R.id.type_b:
+                        mainActivity.tagType = mainActivity.TAG_6B ;
+                        break;
+                    case R.id.type_gb:
+                        mainActivity.tagType = mainActivity.TAG_GB ;
+                        break;
+                    case R.id.type_gjb:
+                        mainActivity.tagType = mainActivity.TAG_GJB ;
+                        break;
+
+                }
+            }
+        });
     }
 
     //按键广播接收
