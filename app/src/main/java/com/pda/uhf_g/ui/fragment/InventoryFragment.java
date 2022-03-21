@@ -392,6 +392,8 @@ public class InventoryFragment extends BaseFragment {
             count++;
             tagInfo.setRssi(info.getRssi() + "");
             tagInfo.setCount(count);
+            tagInfo.setIsShowTid(checkBoxTid.isChecked());
+            tagInfo.setTid(info.getTid());
             tagInfoMap.put(gbepc, tagInfo);
             LogUtil.e("count = " + count);
         } else {
@@ -401,6 +403,7 @@ public class InventoryFragment extends BaseFragment {
             tag.setEpc(info.getEpc());
             tag.setCount(1l);
             tag.setUserData(info.getUserdata());
+            tag.setIsShowTid(checkBoxTid.isChecked());
             tag.setTid(info.getTid());
             tag.setRssi(info.getRssi() + "");
             tagInfoMap.put(gbepc, tag);
@@ -418,6 +421,7 @@ public class InventoryFragment extends BaseFragment {
             Long count = tagInfoMap.get(gbepc).getCount();
             count++;
             tagInfo.setRssi(info.getRssi() + "");
+            tagInfo.setIsShowTid(checkBoxTid.isChecked());
             tagInfo.setCount(count);
             tagInfoMap.put(gbepc, tagInfo);
             LogUtil.e("count = " + count);
@@ -428,6 +432,7 @@ public class InventoryFragment extends BaseFragment {
             tag.setEpc(info.getEpc());
             tag.setCount(1l);
             tag.setUserData(info.getUserdata());
+            tag.setIsShowTid(checkBoxTid.isChecked());
             tag.setTid(info.getTid());
             tag.setRssi(info.getRssi() + "");
             tagInfoMap.put(gbepc, tag);
