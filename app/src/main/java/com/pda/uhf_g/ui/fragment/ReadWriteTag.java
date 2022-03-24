@@ -319,9 +319,9 @@ public class ReadWriteTag extends BaseFragment {
         Reader.READER_ERR er ;
         if (checkBoxFilter.isChecked()){
             //fbank: 1 epc,2 tid ,3 user, 一般使用EPC过滤即选择对应的EPC号的标签进行读写, 起始地址为1
-            er = mUhfrManager.writeTagDataByFilter((char)1,1,writeDataBytes,writeDataBytes.length,accessPassword,(short)1000,epc,1,2,true);
+            er = mUhfrManager.writeTagEPCByFilter(writeDataBytes,accessPassword,(short)1000,epc,1,2,true);
         }else{
-            er = mUhfrManager.writeTagData((char)1,1,writeDataBytes,writeDataBytes.length,accessPassword,(short)1000);
+            er = mUhfrManager.writeTagEPC(writeDataBytes,accessPassword,(short)1000);
         }
         if(er== Reader.READER_ERR.MT_OK_ERR ){
             //写入成功

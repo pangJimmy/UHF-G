@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -36,7 +37,7 @@ import com.uhf.api.cls.Reader;
 public class SettingsFragment extends BaseFragment {
 
     @BindView(R.id.spinner_work_freq)
-    Spinner spinnerWorkFreq ;
+    Spinner spinnerWorkFreq;
     @BindView(R.id.spinner_power)
     Spinner spinnerPower;
     @BindView(R.id.spinner_session)
@@ -59,34 +60,37 @@ public class SettingsFragment extends BaseFragment {
     Button buttonQueryInventory;
     @BindView(R.id.button_set_inventory_type)
     Button buttonSetInventory;
+    @BindView(R.id.button_query_session)
+    Button buttonQuerySession;
+    @BindView(R.id.button_set_session)
+    Button buttonSetSession;
 
     @BindView(R.id.checkbox_fastid)
     CheckBox checkBoxFastid;
 
-    private SharedPreferences mSharedPreferences;
+    //    private SharedPreferences mSharedPreferences;
     //工作频率
-    private String[] arrayWorkFreq ;
+    private String[] arrayWorkFreq;
     //Session
-    private String[] arraySession ;
+    private String[] arraySession;
     //输出功率
-    private String[] arrayPower ;
+    private String[] arrayPower;
     //Q值
-    private String[] arrayQvalue ;
+    private String[] arrayQvalue;
     //盘存AB面
-    private String[] arrayInventoryType ;
+    private String[] arrayInventoryType;
 
 
-
-    private Reader.Region_Conf workFreq ;    //工作频率
+    private Reader.Region_Conf workFreq;    //工作频率
     private int power = 33; //输出功率
     private int session = 1; //session
     private int qvalue = 1;//Q值
-    private int target = 0 ; //A|B面
-    private UHFRManager uhfrManager ;
+    private int target = 0; //A|B面
+    private UHFRManager uhfrManager;
     private MainActivity mainActivity;
 
-    private SharedUtil sharedUtil ;
-    Reader.READER_ERR err ;
+    private SharedUtil sharedUtil;
+    Reader.READER_ERR err;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -99,31 +103,32 @@ public class SettingsFragment extends BaseFragment {
     void queryFreq() {
         if (!mainActivity.isConnectUHF) {
             showToast(R.string.communication_timeout);
-            return ;
+            return;
         }
-        String workFreqStr = "" ;
-        Reader.Region_Conf region = uhfrManager.getRegion() ;
-        LogUtil.e("workFraq = " + region.value()) ;
-        if(region == Reader.Region_Conf.RG_NA){
+        String workFreqStr = "";
+        Reader.Region_Conf region = uhfrManager.getRegion();
+        LogUtil.e("workFraq = " + region.value());
+
+        if (region == Reader.Region_Conf.RG_NA) {
             //北美902_928
-            spinnerWorkFreq.setSelection(0);
-            workFreqStr = arrayWorkFreq[0];
-        }else if(region == Reader.Region_Conf.RG_PRC){
-            //中国1_920_925
-            spinnerWorkFreq.setSelection(1);
-            workFreqStr = arrayWorkFreq[1];
-        }else if(region == Reader.Region_Conf.RG_EU3){
-            //欧洲865_867
             spinnerWorkFreq.setSelection(2);
             workFreqStr = arrayWorkFreq[2];
-        }else if(region == Reader.Region_Conf.RG_PRC2){
-            //中国2_840_845
+        } else if (region == Reader.Region_Conf.RG_PRC) {
+            //中国1_920_925
+            spinnerWorkFreq.setSelection(0);
+            workFreqStr = arrayWorkFreq[0];
+        } else if (region == Reader.Region_Conf.RG_EU3) {
+            //欧洲865_867
             spinnerWorkFreq.setSelection(3);
             workFreqStr = arrayWorkFreq[3];
+        } else if (region == Reader.Region_Conf.RG_PRC2) {
+            //中国2_840_845
+            spinnerWorkFreq.setSelection(1);
+            workFreqStr = arrayWorkFreq[1];
 
         }
 
-        showToast(mainActivity.getResources().getString(R.string.work_freq)  + workFreqStr);
+        showToast(mainActivity.getResources().getString(R.string.work_freq) + workFreqStr);
 
     }
 
@@ -134,15 +139,15 @@ public class SettingsFragment extends BaseFragment {
     void queryPower() {
         if (!mainActivity.isConnectUHF) {
             showToast(R.string.communication_timeout);
-            return ;
+            return;
         }
-        int [] powerArray = uhfrManager.getPower() ;
+        int[] powerArray = uhfrManager.getPower();
         if (powerArray != null && powerArray.length > 0) {
-            LogUtil.e("powerArray = " + powerArray[0]) ;
+            LogUtil.e("powerArray = " + powerArray[0]);
             spinnerPower.setSelection(powerArray[0]);
-            showToast(mainActivity.getResources().getString(R.string.power)  + powerArray[0] + "dB");
-        }else{
-            showToast(R.string.query_fail) ;
+            showToast(mainActivity.getResources().getString(R.string.power) + powerArray[0] + "dB");
+        } else {
+            showToast(R.string.query_fail);
         }
     }
 
@@ -153,16 +158,16 @@ public class SettingsFragment extends BaseFragment {
     void querySession() {
         if (!mainActivity.isConnectUHF) {
             showToast(R.string.communication_timeout);
-            return ;
+            return;
         }
         int session = uhfrManager.getGen2session();
         if (session != -1) {
             spinnerSession.setSelection(session);
-            showToast( "Session"+ session);
-        }else {
-            showToast(R.string.query_fail) ;
+            showToast("Session" + session);
+        } else {
+            showToast(R.string.query_fail);
         }
-        LogUtil.e("session = " + session) ;
+        LogUtil.e("session = " + session);
 
     }
 
@@ -173,16 +178,16 @@ public class SettingsFragment extends BaseFragment {
     void queryQvalue() {
         if (!mainActivity.isConnectUHF) {
             showToast(R.string.communication_timeout);
-            return ;
+            return;
         }
-        int qvalue = uhfrManager.getQvalue() ;
+        int qvalue = uhfrManager.getQvalue();
         if (qvalue != -1) {
-            spinnerQvalue.setSelection((qvalue -1));
-            showToast( "Q = "+ qvalue);
-        }else{
-            showToast(R.string.query_fail) ;
+            spinnerQvalue.setSelection((qvalue ));
+            showToast("Q = " + qvalue);
+        } else {
+            showToast(R.string.query_fail);
         }
-        LogUtil.e("qvalue = " + qvalue) ;
+        LogUtil.e("qvalue = " + qvalue);
     }
 
     /***
@@ -190,7 +195,7 @@ public class SettingsFragment extends BaseFragment {
      */
     @OnClick(R.id.button_query_temp)
     void queryTemp() {
-        int temp = uhfrManager.getTemperature() ;
+        int temp = uhfrManager.getTemperature();
 //        LogUtil.e("temp = " + temp) ;
 //        uhfrManager.get
     }
@@ -202,15 +207,15 @@ public class SettingsFragment extends BaseFragment {
     void queryInventory() {
         if (!mainActivity.isConnectUHF) {
             showToast(R.string.communication_timeout);
-            return ;
+            return;
         }
-        target = uhfrManager.getTarget() ;
-        LogUtil.e("Target = " + target) ;
+        target = uhfrManager.getTarget();
+        LogUtil.e("Target = " + target);
         if (target != -1) {
             spinnerInventoryType.setSelection(target);
-            showToast( mainActivity.getResources().getString(R.string.inventory_type)+ arrayInventoryType[target]);
-        }else{
-            showToast(R.string.query_fail) ;
+            showToast(mainActivity.getResources().getString(R.string.inventory_type) + arrayInventoryType[target]);
+        } else {
+            showToast(R.string.query_fail);
         }
 
     }
@@ -223,13 +228,13 @@ public class SettingsFragment extends BaseFragment {
     void setPower() {
         if (!mainActivity.isConnectUHF) {
             showToast(R.string.communication_timeout);
-            return ;
+            return;
         }
         err = uhfrManager.setPower(power, power);
-        if(err== Reader.READER_ERR.MT_OK_ERR){
+        if (err == Reader.READER_ERR.MT_OK_ERR) {
             showToast(R.string.set_success);
             sharedUtil.savePower(power);
-        }else{
+        } else {
             //5101 仅支持30db
             showToast(R.string.set_fail);
         }
@@ -242,13 +247,14 @@ public class SettingsFragment extends BaseFragment {
     void setWorkFreq() {
         if (!mainActivity.isConnectUHF) {
             showToast(R.string.communication_timeout);
-            return ;
+            return;
         }
+        Log.e("zeng-","setworkFraq:"+workFreq);
         err = uhfrManager.setRegion(workFreq);
-        if(err== Reader.READER_ERR.MT_OK_ERR){
+        if (err == Reader.READER_ERR.MT_OK_ERR) {
             showToast(R.string.set_success);
             sharedUtil.savePower(workFreq.value());
-        }else{
+        } else {
             //5101 仅支持30db
             showToast(R.string.set_fail);
         }
@@ -261,13 +267,13 @@ public class SettingsFragment extends BaseFragment {
     void setSession() {
         if (!mainActivity.isConnectUHF) {
             showToast(R.string.communication_timeout);
-            return ;
+            return;
         }
         boolean flag = uhfrManager.setGen2session(session);
         if (flag) {
             showToast(R.string.set_success);
             sharedUtil.saveSession(session);
-        }else{
+        } else {
             showToast(R.string.set_fail);
         }
     }
@@ -280,13 +286,13 @@ public class SettingsFragment extends BaseFragment {
     void setQvalue() {
         if (!mainActivity.isConnectUHF) {
             showToast(R.string.communication_timeout);
-            return ;
+            return;
         }
         boolean flag = uhfrManager.setQvaule(qvalue);
         if (flag) {
             showToast(R.string.set_success);
             sharedUtil.saveQvalue(qvalue);
-        }else{
+        } else {
             showToast(R.string.set_fail);
         }
     }
@@ -299,13 +305,14 @@ public class SettingsFragment extends BaseFragment {
     void setTarget() {
         if (!mainActivity.isConnectUHF) {
             showToast(R.string.communication_timeout);
-            return ;
+            return;
         }
         boolean flag = uhfrManager.setTarget(target);
+        Log.e("zeng -", "setTarget:" + target);
         if (flag) {
             showToast(R.string.set_success);
             sharedUtil.saveTarget(target);
-        }else{
+        } else {
             showToast(R.string.set_fail);
         }
     }
@@ -323,10 +330,18 @@ public class SettingsFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
         ButterKnife.bind(this, view);
-        uhfrManager = UHFRManager.getInstance() ;
+        uhfrManager = UHFRManager.getInstance();
         initView();
+        Click();
+        return view;
+    }
 
-        return view ;
+    void Click() {
+        buttonFreqQuery.performClick();
+        buttonQueryInventory.performClick();
+        buttonQuerySession.performClick();
+        buttonQueryInventory.performClick();
+        buttonQueryPower.performClick();
     }
 
     private void initView() {
@@ -339,15 +354,16 @@ public class SettingsFragment extends BaseFragment {
         sharedUtil = new SharedUtil(mainActivity);
         //获取保存的设置
         spinnerPower.setSelection(sharedUtil.getPower());
-        int freq = sharedUtil.getWorkFreq() ;
-        if(Reader.Region_Conf.valueOf(freq) == Reader.Region_Conf.RG_NA){
-            spinnerWorkFreq.setSelection(0);
-        }else if(Reader.Region_Conf.valueOf(freq) == Reader.Region_Conf.RG_PRC){
-            spinnerWorkFreq.setSelection(1);
-        }else if(Reader.Region_Conf.valueOf(freq) == Reader.Region_Conf.RG_EU3){
+        int freq = sharedUtil.getWorkFreq();
+        Log.e("zeng-","freq:"+freq);
+        if (Reader.Region_Conf.valueOf(freq) == Reader.Region_Conf.RG_NA) {
             spinnerWorkFreq.setSelection(2);
-        }else if(Reader.Region_Conf.valueOf(freq) == Reader.Region_Conf.RG_PRC2){
+        } else if (Reader.Region_Conf.valueOf(freq) == Reader.Region_Conf.RG_PRC) {
+            spinnerWorkFreq.setSelection(0);
+        } else if (Reader.Region_Conf.valueOf(freq) == Reader.Region_Conf.RG_EU3) {
             spinnerWorkFreq.setSelection(3);
+        } else if (Reader.Region_Conf.valueOf(freq) == Reader.Region_Conf.RG_PRC2) {
+            spinnerWorkFreq.setSelection(1);
         }
         spinnerSession.setSelection(sharedUtil.getSession());
         spinnerQvalue.setSelection((sharedUtil.getQvalue() - 1));
@@ -360,20 +376,20 @@ public class SettingsFragment extends BaseFragment {
 //                String workFreqStr = arrayWorkFreq[position];
                 switch (position) {
                     case 0:
-                        //北美_902_928
-                        workFreq = Reader.Region_Conf.RG_NA ;
+                        //中国1_920_925
+                        workFreq = Reader.Region_Conf.RG_PRC;
                         break;
                     case 1:
-                        //中国1_920_925
-                        workFreq = Reader.Region_Conf.RG_PRC ;
+                        //中国2_840_845
+                        workFreq = Reader.Region_Conf.RG_PRC2;
                         break;
                     case 2:
-                        //欧洲865_867
-                        workFreq = Reader.Region_Conf.RG_EU3 ;
+                        //北美_902_928
+                        workFreq = Reader.Region_Conf.RG_NA;
                         break;
                     case 3:
-                        //中国2_840_845
-                        workFreq = Reader.Region_Conf.RG_PRC2 ;
+                        //欧洲865_867
+                        workFreq = Reader.Region_Conf.RG_EU3;
                         break;
 
                 }
@@ -388,7 +404,7 @@ public class SettingsFragment extends BaseFragment {
         spinnerPower.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                power = position ;
+                power = position;
             }
 
             @Override
@@ -401,7 +417,7 @@ public class SettingsFragment extends BaseFragment {
         spinnerSession.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                session = position ;
+                session = position;
             }
 
             @Override
@@ -414,7 +430,7 @@ public class SettingsFragment extends BaseFragment {
         spinnerQvalue.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                qvalue = position + 1;
+                qvalue = position ;
             }
 
             @Override
@@ -423,6 +439,18 @@ public class SettingsFragment extends BaseFragment {
             }
         });
 
+        //
+        spinnerInventoryType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                target = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         //fastid
         checkBoxFastid.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

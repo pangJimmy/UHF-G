@@ -107,10 +107,10 @@
     <string name="export_excel_need_permission">导出excel所需权限</string>
 
     <string-array name="work_freq">
-        <item>北美_902_928</item>
         <item>中国1_920_925</item>
-        <item>欧洲_865_867</item>
         <item>中国2_840_845</item>
+        <item>北美_902_928</item>
+        <item>欧洲_865_867</item>
     </string-array>
 
 
@@ -147,7 +147,8 @@
 
     <!--Q值范围-->
     <string-array name="q_value_arrays">
-        <item>1-单标签</item>
+        <item>0-单标签</item>
+        <item>1</item>
         <item>2</item>
         <item>3</item>
         <item>4-多标签</item>
