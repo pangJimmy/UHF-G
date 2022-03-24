@@ -27,7 +27,7 @@ public class SharedUtil {
      * @return
      */
     public int getWorkFreq() {
-        return mSharedPreferences.getInt("workFreq", 0);
+        return mSharedPreferences.getInt("workFreq", 1);
     }
 
     /***
@@ -81,7 +81,7 @@ public class SharedUtil {
      * @return
      */
     public int getQvalue() {
-        return mSharedPreferences.getInt("qvalue",1);
+        return mSharedPreferences.getInt("qvalue",0);
     }
 
     /***
@@ -99,6 +99,7 @@ public class SharedUtil {
      * @return
      */
     public int getTarget() {
-        return mSharedPreferences.getInt("target",1);
+
+        return mSharedPreferences.getInt("target",0);
     }
 }
