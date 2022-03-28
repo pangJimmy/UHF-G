@@ -21,13 +21,13 @@
         android:name="com.pda.uhf_g.ui.fragment.ModifyEPCFragment"
         android:label="@string/modify_epc"
         tools:layout="@layout/fragment_modify_epc" />
-        -->
+
     <fragment
         android:id="@+id/nav_frequency_setting"
         android:name="com.pda.uhf_g.ui.fragment.FrequencySettingsFragment"
         android:label="@string/frequency_settings"
         tools:layout="@layout/fragment_frequency_settings" />
-
+        -->
     <fragment
         android:id="@+id/nav_setting"
         android:name="com.pda.uhf_g.ui.fragment.SettingsFragment"
