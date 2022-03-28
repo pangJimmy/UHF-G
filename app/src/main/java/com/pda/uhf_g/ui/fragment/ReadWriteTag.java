@@ -23,6 +23,7 @@ import com.uhf.api.cls.Reader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.fragment.app.FragmentManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -98,10 +99,19 @@ public class ReadWriteTag extends BaseFragment {
     Reader.Lock_Type lock_type = null;//lock bank
     int lockTypeInt ;//lock type
 
+    private ReadWriteGBFragment readWriteGBFragment =  new ReadWriteGBFragment() ;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainActivity = (MainActivity) getActivity();
+//        if (mainActivity.tagType == MainActivity.TAG_GB) {
+//            //国标标签界面跳转
+//            FragmentManager fragmentManager = getFragmentManager();
+//            fragmentManager.beginTransaction()
+//                    .replace(R.id.nav_host_fragment, readWriteGBFragment)
+//                    .commit();
+//
+//        }
     }
 
     @Override
