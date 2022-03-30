@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.pda.uhf_g.R;
 import com.pda.uhf_g.entity.TagInfo;
+import com.pda.uhf_g.util.LogUtil;
 
 import java.math.RoundingMode;
 import java.text.NumberFormat;
@@ -58,12 +59,6 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
         TextView tid;
         TextView rssi;
         TextView count;
-        TextView userData;
-        TextView reserveData;
-        TextView moisture_data;
-        TextView ltu27_data;
-        TextView ltu31_data;
-        TextView epcData;
         TextView ctesius_data;
         LinearLayout layoutTid ;
         TextView tvTid ;
@@ -77,8 +72,6 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
             tid = (TextView) view.findViewById(R.id.tid);
             rssi = (TextView) view.findViewById(R.id.rssi);
             count = (TextView) view.findViewById(R.id.count);
-            userData = (TextView) view.findViewById(R.id.userData);
-            reserveData = (TextView) view.findViewById(R.id.reserveData);
 //            moisture_data = (TextView) view.findViewById(R.id.moisture_data);
 //            ltu27_data = (TextView) view.findViewById(R.id.ltu27_data);
 //            ltu31_data = (TextView) view.findViewById(R.id.ltu31_data);
@@ -118,66 +111,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
         TagInfo tag = mTagList.get(position);
         holder.index.setText(tag.getIndex().toString());
         holder.type.setText(tag.getType());
-//        if (showText != null && showText.getId() == R.id.ctesius_title) {
-//            holder.ctesius_data.setVisibility(View.VISIBLE);
-//            holder.ctesius_data.setText(nf.format(tag.getCtesius() * 0.01) + "°");
-//        } else {
-            holder.ctesius_data.setVisibility(View.GONE);
-//        }
-//        if (!isTid) {
-//            holder.epc.setVisibility(View.VISIBLE);
-//            holder.tid.setVisibility(View.GONE);
-//        } else {
-//            holder.epc.setVisibility(View.GONE);
-//            holder.tid.setVisibility(View.VISIBLE);
-//        }
-//        if (showText != null) {
-////            if (showText.getId() == R.id.sensor_title) {
-////                holder.sensor_data.setVisibility(View.VISIBLE);
-////                holder.sensor_data.setText(tag.getNmv2d());
-////            }
-//            if (showText.getId() == R.id.moisture_title) {
-//                holder.moisture_data.setText(tag.getMoisture());
-//                holder.moisture_data.setVisibility(View.VISIBLE);
-//                holder.ltu27_data.setVisibility(View.GONE);
-//                holder.ltu31_data.setVisibility(View.GONE);
-//                holder.epcData.setVisibility(View.GONE);
-//            }
-//
-//            if (showText.getId() == R.id.ltu27_title) {
-//                holder.ltu27_data.setText(tag.getLtu27());
-//                holder.ltu27_data.setVisibility(View.VISIBLE);
-//                holder.moisture_data.setVisibility(View.GONE);
-//                holder.ltu31_data.setVisibility(View.GONE);
-//                holder.epcData.setVisibility(View.GONE);
-//            }
-//
-//            if (showText.getId() == R.id.ltu31_title) {
-//                holder.ltu31_data.setText(tag.getLtu31());
-//                holder.ltu31_data.setVisibility(View.VISIBLE);
-//                holder.moisture_data.setVisibility(View.GONE);
-//                holder.ltu27_data.setVisibility(View.GONE);
-//                holder.epcData.setVisibility(View.GONE);
-//            }
-//
-//            if (showText.getId() == R.id.epcBank_title) {
-//                holder.epcData.setText(tag.getEpcData());
-//                holder.epcData.setVisibility(View.VISIBLE);
-//                holder.moisture_data.setVisibility(View.GONE);
-//                holder.ltu27_data.setVisibility(View.GONE);
-//                holder.ltu31_data.setVisibility(View.GONE);
-//            }
-//
-//        } else {
-////            holder.sensor_data.setVisibility(View.GONE);
-//            holder.moisture_data.setVisibility(View.GONE);
-//            holder.ltu27_data.setVisibility(View.GONE);
-//            holder.ltu31_data.setVisibility(View.GONE);
-//            holder.epcData.setVisibility(View.GONE);
-//        }
-
-        holder.userData.setText(tag.getUserData());
-        holder.reserveData.setText(tag.getReservedData());
+        holder.ctesius_data.setVisibility(View.GONE);
         holder.epc.setText(tag.getEpc());
         holder.tid.setText(tag.getTid());
         holder.rssi.setText(tag.getRssi());
@@ -191,33 +125,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
 
         if (getThisPosition() != null && position == getThisPosition()) {
             holder.itemView.setBackgroundColor(Color.rgb(135, 206, 235));
-//            holder.index.setBackgroundColor(Color.rgb(135, 206, 235));
-//            holder.type.setBackgroundColor(Color.rgb(135, 206, 235));
-//            holder.tid.setBackgroundColor(Color.rgb(135, 206, 235));
-//            holder.epc.setBackgroundColor(Color.rgb(135, 206, 235));
-//            holder.count.setBackgroundColor(Color.rgb(135, 206, 235));
-//            holder.rssi.setBackgroundColor(Color.rgb(135, 206, 235));
-//            holder.userData.setBackgroundColor(Color.rgb(135, 206, 235));
-//            holder.reserveData.setBackgroundColor(Color.rgb(135, 206, 235));
-//            holder.sensor_data.setBackgroundColor(Color.rgb(135, 206, 235));
-//            holder.epcData.setBackgroundColor(Color.rgb(135, 206, 235));
-//            holder.moisture_data.setBackgroundColor(Color.rgb(135, 206, 235));
-//            holder.ltu27_data.setBackgroundColor(Color.rgb(135, 206, 235));
-//            holder.ltu31_data.setBackgroundColor(Color.rgb(135, 206, 235));
         } else {
-//            holder.index.setBackgroundColor(Color.WHITE);
-//            holder.type.setBackgroundColor(Color.WHITE);
-//            holder.tid.setBackgroundColor(Color.WHITE);
-//            holder.epc.setBackgroundColor(Color.WHITE);
-//            holder.count.setBackgroundColor(Color.WHITE);
-//            holder.rssi.setBackgroundColor(Color.WHITE);
-//            holder.userData.setBackgroundColor(Color.WHITE);
-//            holder.reserveData.setBackgroundColor(Color.WHITE);
-//            holder.sensor_data.setBackgroundColor(Color.WHITE);
-//            holder.epcData.setBackgroundColor(Color.WHITE);
-//            holder.moisture_data.setBackgroundColor(Color.WHITE);
-//            holder.ltu27_data.setBackgroundColor(Color.WHITE);
-//            holder.ltu31_data.setBackgroundColor(Color.WHITE);
             holder.itemView.setBackgroundColor(Color.WHITE);
         }
     }
@@ -228,9 +136,12 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
     }
 
     public void notifyData(List<TagInfo> poiItemList) {
+        LogUtil.e("RecycleViewAdapter notifyData()");
         if (poiItemList != null) {
             mTagList = poiItemList;
-//            notifyDataSetChanged();
+//            mTagList.clear();
+//            mTagList.addAll(poiItemList) ;
+            notifyDataSetChanged();
         }
     }
 

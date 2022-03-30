@@ -33,8 +33,14 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
+                    <ListView
+                        android:id="@+id/listview_epc"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycle"
+                        android:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
