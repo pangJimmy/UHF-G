@@ -59,6 +59,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * 盘存界面，用于盘存6C/6B/GB/GJB标签
@@ -66,16 +68,6 @@ import java.util.TimeZone;
  */
 public class InventoryFragment extends BaseFragment {
 
-    /**6C通用版本**/
-    private final String VERSION_6C = "1";
-    /**6C/6B版本**/
-    private final String VERSION_6B = "3";
-    /**国军标版本**/
-    private final String VERSION_GJB = "5";
-    /**国标版本**/
-    private final String VERSION_GB = "6";
-    /**国军标和国标版本**/
-    private final String VERSION_GB_GJB = "7";
 
     @BindView(R.id.textView_all_tags)
     TextView tvAllTag ;
@@ -96,16 +88,6 @@ public class InventoryFragment extends BaseFragment {
 
     @BindView(R.id.recycle)
     RecyclerView recyclerView ;//EPC list
-    @BindView(R.id.radiogroup_type)
-    RadioGroup radioGroup ;
-    @BindView(R.id.type_c)
-    RadioButton radioButton6C ;
-    @BindView(R.id.type_b)
-    RadioButton radioButton6B ;
-    @BindView(R.id.type_gb)
-    RadioButton radioButtonGB ;
-    @BindView(R.id.type_gjb)
-    RadioButton radioButtonGJB ;
 
     @BindView(R.id.checkbox_multi_tag)
     CheckBox checkBoxMultiTag ;
@@ -122,6 +104,7 @@ public class InventoryFragment extends BaseFragment {
     private Handler mHandler = new Handler();
     private Handler soundHandler = new Handler();
     private Runnable timeTask = null;
+    private Runnable soundTask = null ;
     private int time = 0;
     private boolean isReader = false;
     private boolean isSound = true;
@@ -141,8 +124,13 @@ public class InventoryFragment extends BaseFragment {
 
             switch (msg.what) {
                 case MSG_INVENROTY:
-                    UtilSound.play(1, 0);
-                    upDataPane();
+                    ArrayList<TagInfo> list = (ArrayList<TagInfo>) msg.obj;
+                    if (list != null) {
+                        tagInfoList = list ;
+//                        adapter.notifyData(tagInfoList);
+                    }
+//                    UtilSound.play(1, 0);
+//                    adapter.notifyData(tagInfoList);
                     break ;
 
             }
@@ -155,6 +143,7 @@ public class InventoryFragment extends BaseFragment {
     private void initPane() {
         index = 1l;
         time = 0;
+        rateMap.clear();
         tagInfoMap.clear();
         tagInfoList.clear();
         adapter.notifyData(tagInfoList);
@@ -237,10 +226,7 @@ public class InventoryFragment extends BaseFragment {
         public void run() {
             LogUtil.e("invenrotyThread is running");
             List<Reader.TAGINFO> listTag = null;
-            List<LogBaseGbInfo> listGBTag ;
-            List<LogBaseGJbInfo> listGJBTag ;
             //6C标签
-            if(radioButton6C.isChecked()){
                 //多标签盘存
                 if (checkBoxMultiTag.isChecked()) {
                     listTag = mUhfrManager.tagInventoryRealTime();
@@ -253,8 +239,9 @@ public class InventoryFragment extends BaseFragment {
                     }
                 }
                 //盘存列表
-                if (listTag != null && listTag.size() > 0) {
-
+                if (listTag != null && !listTag.isEmpty()) {
+                    LogUtil.e("inventory listTag size = " + listTag.size());
+                    UtilSound.play(1, 0);
                     for (Reader.TAGINFO taginfo : listTag) {
                         //去除重复的EPC号
                         Map<String, TagInfo> infoMap = pooled6cData(taginfo);
@@ -263,10 +250,9 @@ public class InventoryFragment extends BaseFragment {
                         //将EPC数据作为全局变量
                         mainActivity.listEPC.clear();
                         mainActivity.listEPC.addAll(infoMap.keySet());
-//                    LogUtil.e("EPC = "  + Tools.Bytes2HexString(taginfo.EpcId, taginfo.EpcId.length) + "\n");
-//                    LogUtil.e("TID = "  + Tools.Bytes2HexString(taginfo.EmbededData, taginfo.EmbededData.length));
                     }
                     handler.sendEmptyMessage(MSG_INVENROTY);
+
                 }else{
                     LogUtil.e("listTag = null");
                     //多标签状态重置
@@ -275,43 +261,6 @@ public class InventoryFragment extends BaseFragment {
                         mUhfrManager.asyncStartReading();
                     }
                 }
-            } else if (radioButtonGB.isChecked()) {
-                //国标标签
-                listGBTag = mUhfrManager.inventoryGBTag(checkBoxTid.isChecked(), (short) 20);
-                //盘存列表
-                if (listGBTag != null && listGBTag.size() > 0) {
-                    LogUtil.e("listGBTag size = "+ listGBTag.size());
-                    for (LogBaseGbInfo taginfo : listGBTag) {
-                        //去除重复的EPC号
-                        Map<String, TagInfo> infoMap = pooledGbData(taginfo);
-                        tagInfoList.clear();
-                        tagInfoList.addAll(infoMap.values());
-                        //将EPC数据作为全局变量
-                        mainActivity.listEPC.clear();
-                        mainActivity.listEPC.addAll(infoMap.keySet());
-                    }
-                    handler.sendEmptyMessage(MSG_INVENROTY);
-                }
-            }else if(radioButtonGJB.isChecked()){
-                //国军标标签
-                listGJBTag = mUhfrManager.inventoryGJBTag(checkBoxTid.isChecked(), (short) 20);
-                //盘存列表
-                if (listGJBTag != null && listGJBTag.size() > 0) {
-                    LogUtil.e("listGJBTag size = "+ listGJBTag.size());
-                    for (LogBaseGJbInfo taginfo : listGJBTag) {
-                        //去除重复的EPC号
-                        Map<String, TagInfo> infoMap = pooledGJbData(taginfo);
-                        tagInfoList.clear();
-                        tagInfoList.addAll(infoMap.values());
-                        //将EPC数据作为全局变量
-                        mainActivity.listEPC.clear();
-                        mainActivity.listEPC.addAll(infoMap.keySet());
-                    }
-                    handler.sendEmptyMessage(MSG_INVENROTY);
-                }
-            }
-
-
             //是否连续盘存
             if (checkBoxLoop.isChecked()) {
                 handler.postDelayed(invenrotyThread, 0) ;
@@ -356,118 +305,9 @@ public class InventoryFragment extends BaseFragment {
         }
         return tagInfoMap;
     }
-//
-//    //去重6B
-//    public Map<String, TagInfo> pooled6bData(LogBase6bInfo info) {
-//        if (tagInfoMap.containsKey(info.getTid())) {
-//            TagInfo tagInfo = tagInfoMap.get(info.getTid());
-//            Long count = tagInfoMap.get(info.getTid()).getCount();
-//            count++;
-//            tagInfo.setRssi(info.getRssi() + "");
-//            tagInfo.setCount(count);
-//            tagInfoMap.put(info.getTid(), tagInfo);
-//        } else {
-//            TagInfo tag = new TagInfo();
-//            tag.setIndex(index);
-//            tag.setType("6B");
-//            tag.setCount(1l);
-//            tag.setUserData(info.getUserdata());
-//            if (info.getTid() != null) {
-//                tag.setTid(info.getTid());
-//            }
-//            tag.setRssi(info.getRssi() + "");
-//            tagInfoMap.put(info.getTid(), tag);
-//            index++;
-//        }
-////        handlerStop.sendEmptyMessage(2);
-//        return tagInfoMap;
-//    }
-//
-//    //去重GB
-    public Map<String, TagInfo> pooledGbData(LogBaseGbInfo info) {
-        String gbepc = info.getEpc() ;
-        if (tagInfoMap.containsKey(gbepc)) {
-            TagInfo tagInfo = tagInfoMap.get(gbepc);
-            Long count = tagInfoMap.get(gbepc).getCount();
-            count++;
-            tagInfo.setRssi(info.getRssi() + "");
-            tagInfo.setCount(count);
-            tagInfo.setIsShowTid(checkBoxTid.isChecked());
-            tagInfo.setTid(info.getTid());
-            tagInfoMap.put(gbepc, tagInfo);
-            LogUtil.e("count = " + count);
-        } else {
-            TagInfo tag = new TagInfo();
-            tag.setIndex(index);
-            tag.setType("GB");
-            tag.setEpc(info.getEpc());
-            tag.setCount(1l);
-            tag.setUserData(info.getUserdata());
-            tag.setIsShowTid(checkBoxTid.isChecked());
-            tag.setTid(info.getTid());
-            tag.setRssi(info.getRssi() + "");
-            tagInfoMap.put(gbepc, tag);
-            index++;
-        }
-//        handlerStop.sendEmptyMessage(2);
-        return tagInfoMap;
-    }
 
-    //    //去重GJB
-    public Map<String, TagInfo> pooledGJbData(LogBaseGJbInfo info) {
-        String gbepc = info.getEpc() ;
-        if (tagInfoMap.containsKey(gbepc)) {
-            TagInfo tagInfo = tagInfoMap.get(gbepc);
-            Long count = tagInfoMap.get(gbepc).getCount();
-            count++;
-            tagInfo.setRssi(info.getRssi() + "");
-            tagInfo.setIsShowTid(checkBoxTid.isChecked());
-            tagInfo.setCount(count);
-            tagInfoMap.put(gbepc, tagInfo);
-            LogUtil.e("count = " + count);
-        } else {
-            TagInfo tag = new TagInfo();
-            tag.setIndex(index);
-            tag.setType("GB");
-            tag.setEpc(info.getEpc());
-            tag.setCount(1l);
-            tag.setUserData(info.getUserdata());
-            tag.setIsShowTid(checkBoxTid.isChecked());
-            tag.setTid(info.getTid());
-            tag.setRssi(info.getRssi() + "");
-            tagInfoMap.put(gbepc, tag);
-            index++;
-        }
-//        handlerStop.sendEmptyMessage(2);
-        return tagInfoMap;
-    }
-    /**
-     * 获取UHF模块版本信息，根据版本号信息，判定模块支持哪些标签
-     */
-    private String getBaseVersion() {
-        String version = null ;
-        LogUtil.e("getBaseVersion()");
-        //操作之前判定模块是否正常初始化
-        if(!mainActivity.isConnectUHF){
-            showToast(R.string.communication_timeout);
-            return version;
-        }
-        version = mUhfrManager.getHardware() ;
-        //xl模块MODOULE_SLR1200, version 为空时通讯失败，MODOULE开头为xl模块，X.X.1.X为gx模块
-        if (version != null && !version.startsWith("MODOULE")) {
-            LogUtil.e("version = " + version);
-            String[] arrays = version.split("\\.");
-            if (arrays.length > 2) {
-                /**
-                 * 获取固件gx
-                 * X.X.1.X表示通用版本（1或者3表示通用版本支持6c/b; 5表示GJB，6表示GB，7表示GJB和GB）
-                 * baseVersions='1.1.3.15'
-                 */
-                version = arrays[2];
-            }
-        }
-        return version;
-    }
+
+
 
     /***清除***/
     @OnClick(R.id.button_clean)
@@ -500,39 +340,18 @@ public class InventoryFragment extends BaseFragment {
         checkBoxLoop.setEnabled(isEnable);
         checkBoxMultiTag.setEnabled(isEnable);
         checkBoxTid.setEnabled(isEnable);
-        radioGroup.setEnabled(isEnable);
         btnExcel.setEnabled(isEnable);
-        radioButton6C.setEnabled(isEnable);
-        radioButton6B.setEnabled(isEnable);
-        radioButtonGB.setEnabled(isEnable);
-        radioButtonGJB.setEnabled(isEnable);
+
     }
 
-    /***
-     * 恢复设置可用
-     */
-//    private void setEnable() {
-//        checkBoxLoop.setFocusable(true);
-//        checkBoxMultiTag.setFocusable(true);
-//        checkBoxTid.setFocusable(true);
-//        radioGroup.setFocusable(true);
-//    }
+
 
 
     /***盘存EPC***/
     private void inventoryEPC() {
         isReader = true ;
-        //判断盘存哪一类标签
-        if (radioGroup.getCheckedRadioButtonId() == R.id.type_c) {
-            //盘存6C标签
-            inventory6C() ;
-        }else if(radioGroup.getCheckedRadioButtonId() == R.id.type_b){
-            //盘存6B标签
-        } else if (radioGroup.getCheckedRadioButtonId() == R.id.type_gb
-                || radioGroup.getCheckedRadioButtonId() == R.id.type_gjb) {
-            //盘存国标标签或者国军标
-            inventoryGB();
-        }
+        inventory6C() ;
+
     }
 
     /**停止盘存**/
@@ -543,12 +362,15 @@ public class InventoryFragment extends BaseFragment {
                 mUhfrManager.asyncStopReading();
             }
             handler.removeCallbacks(invenrotyThread);
-            handler.removeCallbacks(timeTask);
+            mHandler.removeCallbacks(timeTask);
+            rateValue = 0 ;
+            soundHandler.removeCallbacks(soundTask);
             isReader = false ;
             btnInventory.setText(R.string.start_inventory);
         } else {
             showToast(R.string.communication_timeout);
         }
+        isReader = false ;
         setEnabled(true) ;
     }
 
@@ -564,32 +386,24 @@ public class InventoryFragment extends BaseFragment {
             mUhfrManager.setGen2session(true);
             mUhfrManager.asyncStartReading();
         }else{
-            mUhfrManager.setGen2session(false);
+//            mUhfrManager.setGen2session(false);
         }
-        //计时器
-        computedSpeed() ;
-        //启动盘存线程
-        handler.postDelayed(invenrotyThread, 0);
-    }
 
-    /***盘存国标标签**/
-    private void inventoryGB() {
-        if (checkBoxLoop.isChecked()) {
-            //连续盘存
-            btnInventory.setText(R.string.stop_inventory);
-            setEnabled(false) ;
-        }
+
         //计时器
         computedSpeed() ;
+        soundTask();
         //启动盘存线程
-        handler.postDelayed(invenrotyThread, 0);
+//        handler.postDelayed(invenrotyThread, 0);
+        new Thread(new InventoryRunnable()).start();
     }
 
 
     //一秒刷新计算
     long rateValue = 0;
+    Map<String, Long> rateMap = new Hashtable<String, Long>();
     private void computedSpeed() {
-        Map<String, Long> rateMap = new Hashtable<String, Long>();
+
         timeTask = new Runnable() {
             @Override
             public void run() {
@@ -601,7 +415,8 @@ public class InventoryFragment extends BaseFragment {
                 if (null != afterValue) {
                     before = afterValue;
                 }
-                adapter.notifyData(tagInfoList);
+                //刷新盘存列表
+//                adapter.notifyData(tagInfoList);
                 long readCounts = getReadCount(tagInfoList);
                 tvReadCount.setText(readCounts + "");
                 tvAllTag.setText(tagInfoList.size() + "");
@@ -613,13 +428,13 @@ public class InventoryFragment extends BaseFragment {
                 }
                 //连续盘存模式下，每隔1s循环执行run方法
                 if (checkBoxLoop.isChecked()) {
-                    handler.postDelayed(timeTask, 1000);
+                    mHandler.postDelayed(this, 1000);
                 }
 
             }
         };
         //延迟一秒执行
-        handler.postDelayed(timeTask, 0);
+        mHandler.postDelayed(timeTask, 200);
     }
 
 
@@ -720,7 +535,6 @@ public class InventoryFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_inventory, container, false) ;
         ButterKnife.bind(this, view);
         mUhfrManager = UHFRManager.getInstance();
-        initView();
         initRecycleView();
 
 
@@ -738,66 +552,6 @@ public class InventoryFragment extends BaseFragment {
         mainActivity.registerReceiver(keyReceiver, filter);
     }
 
-    private void initView() {
-        String version = getBaseVersion() ;
-        if (version == null) {
-            return ;
-        }
-        switch (version) {
-
-            case VERSION_6B:
-                radioButton6B.setVisibility(View.VISIBLE);
-                radioButtonGB.setVisibility(View.GONE);
-                radioButtonGJB.setVisibility(View.GONE);
-
-                break ;
-            case VERSION_GJB:
-                radioButton6B.setVisibility(View.GONE);
-                radioButtonGJB.setVisibility(View.VISIBLE);
-                radioButtonGB.setVisibility(View.GONE);
-                break ;
-            case VERSION_GB:
-                radioButton6B.setVisibility(View.GONE);
-                radioButtonGB.setVisibility(View.VISIBLE);
-                radioButtonGJB.setVisibility(View.GONE);
-
-                break ;
-            case VERSION_GB_GJB:
-                radioButton6B.setVisibility(View.GONE);
-                radioButtonGB.setVisibility(View.VISIBLE);
-                radioButtonGJB.setVisibility(View.VISIBLE);
-
-                break ;
-            case VERSION_6C:
-            default:
-                radioButton6B.setVisibility(View.GONE);
-                radioButtonGB.setVisibility(View.GONE);
-                radioButtonGJB.setVisibility(View.GONE);
-                break;
-        }
-
-        //选择要操作的标签类型
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                switch (radioGroup.getCheckedRadioButtonId()){
-                    case R.id.type_c:
-                        mainActivity.tagType = mainActivity.TAG_6C ;
-                        break;
-                    case R.id.type_b:
-                        mainActivity.tagType = mainActivity.TAG_6B ;
-                        break;
-                    case R.id.type_gb:
-                        mainActivity.tagType = mainActivity.TAG_GB ;
-                        break;
-                    case R.id.type_gjb:
-                        mainActivity.tagType = mainActivity.TAG_GJB ;
-                        break;
-
-                }
-            }
-        });
-    }
 
     //按键广播接收
     private class KeyReceiver extends BroadcastReceiver {
@@ -829,5 +583,76 @@ public class InventoryFragment extends BaseFragment {
             }
         }
 
+    }
+
+
+    //提示音线程
+    private void soundTask() {
+        soundTask = new Runnable() {
+            @Override
+            public void run() {
+//                rateValue = 1 ;
+                LogUtil.e("rateValue = " + rateValue);
+                if (rateValue != 0) {
+                    UtilSound.play(1, 0);
+                }
+                soundHandler.postDelayed(this, 40);
+            }
+        };
+        soundHandler.postDelayed(soundTask, 0);
+    }
+
+
+    //盘存线程
+    private class InventoryRunnable implements Runnable{
+
+        @Override
+        public void run() {
+            while (isReader) {
+                //多标签盘存
+                List<Reader.TAGINFO> listTag;
+                if (checkBoxMultiTag.isChecked()) {
+                    listTag = mUhfrManager.tagInventoryRealTime();
+                }else{
+                    if (checkBoxTid.isChecked()) {
+                        //盘存时带TID
+                        listTag = mUhfrManager.tagEpcTidInventoryByTimer((short) 20) ;
+                    }else{
+                        listTag = mUhfrManager.tagInventoryByTimer((short) 20); ;
+                    }
+                }
+                //盘存列表
+                if (listTag != null && listTag.size() > 0) {
+                    ArrayList<TagInfo> list = new ArrayList<>();
+                    for (Reader.TAGINFO taginfo : listTag) {
+                        //去除重复的EPC号
+                        Map<String, TagInfo> infoMap = pooled6cData(taginfo);
+                        list.clear();
+                        list.addAll(infoMap.values());
+
+//                        tagInfoList.clear();
+//                        tagInfoList.addAll(infoMap.values());
+//                        //将EPC数据作为全局变量
+//                        mainActivity.listEPC.clear();
+//                        mainActivity.listEPC.addAll(infoMap.keySet());
+
+//                    LogUtil.e("EPC = "  + Tools.Bytes2HexString(taginfo.EpcId, taginfo.EpcId.length) + "\n");
+//                    LogUtil.e("TID = "  + Tools.Bytes2HexString(taginfo.EmbededData, taginfo.EmbededData.length));
+                    }
+                    Message msg = handler.obtainMessage() ;
+                    msg.obj = list ;
+                    msg.what = MSG_INVENROTY  ;
+                    handler.sendMessage(msg);
+
+                }else{
+                    LogUtil.e("listTag = null");
+                    //多标签状态重置
+                    if(checkBoxMultiTag.isChecked()){
+                        mUhfrManager.asyncStopReading();
+                        mUhfrManager.asyncStartReading();
+                    }
+                }
+            }
+        }
     }
 }

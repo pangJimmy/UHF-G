@@ -230,7 +230,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
     public void notifyData(List<TagInfo> poiItemList) {
         if (poiItemList != null) {
             mTagList = poiItemList;
-            notifyDataSetChanged();
+//            notifyDataSetChanged();
         }
     }
 

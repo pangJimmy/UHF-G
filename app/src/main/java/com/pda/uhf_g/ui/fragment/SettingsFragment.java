@@ -332,17 +332,9 @@ public class SettingsFragment extends BaseFragment {
         ButterKnife.bind(this, view);
         uhfrManager = UHFRManager.getInstance();
         initView();
-        Click();
         return view;
     }
 
-    void Click() {
-        buttonFreqQuery.performClick();
-        buttonQueryInventory.performClick();
-        buttonQuerySession.performClick();
-        buttonQueryInventory.performClick();
-        buttonQueryPower.performClick();
-    }
 
     private void initView() {
         arrayWorkFreq = mainActivity.getResources().getStringArray(R.array.work_freq);
@@ -355,7 +347,7 @@ public class SettingsFragment extends BaseFragment {
         //获取保存的设置
         spinnerPower.setSelection(sharedUtil.getPower());
         int freq = sharedUtil.getWorkFreq();
-        Log.e("zeng-","freq:"+freq);
+//        Log.e("zeng-","freq:"+freq);
         if (Reader.Region_Conf.valueOf(freq) == Reader.Region_Conf.RG_NA) {
             spinnerWorkFreq.setSelection(2);
         } else if (Reader.Region_Conf.valueOf(freq) == Reader.Region_Conf.RG_PRC) {
@@ -366,7 +358,8 @@ public class SettingsFragment extends BaseFragment {
             spinnerWorkFreq.setSelection(1);
         }
         spinnerSession.setSelection(sharedUtil.getSession());
-        spinnerQvalue.setSelection((sharedUtil.getQvalue() - 1));
+        spinnerQvalue.setSelection((sharedUtil.getQvalue()));
+        spinnerInventoryType.setSelection(sharedUtil.getTarget());
 
 
         //工作频率

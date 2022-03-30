@@ -84,45 +84,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                    <RadioGroup
-                        android:id="@+id/radiogroup_type"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="horizontal">
 
-                        <RadioButton
-                            android:id="@+id/type_c"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:checked="true"
-                            android:text="@string/type_6c"
-                             />
-
-                        <RadioButton
-                            android:id="@+id/type_b"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:text="@string/type_6b"
-                             />
-
-                        <RadioButton
-                            android:id="@+id/type_gb"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:text="@string/type_gb"
-                             />
-                        <RadioButton
-                            android:id="@+id/type_gjb"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:text="@string/type_gjb"
-                            />
-                    </RadioGroup>
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout

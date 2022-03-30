@@ -15,14 +15,19 @@
             android:id="@+id/nav_modify_epc"
             android:icon="@drawable/ic_modify_epc"
             android:title="@string/modify_epc" />
-            -->
+
         <item
             android:id="@+id/nav_frequency_setting"
             android:icon="@drawable/ic_freq_settings"
             android:title="@string/frequency_settings" />
+             -->
         <item
             android:id="@+id/nav_setting"
             android:icon="@drawable/ic_settings"
             android:title="@string/settings" />
+        <item
+            android:id="@+id/nav_help"
+            android:icon="@drawable/ic_help"
+            android:title="@string/help" />
     </group>
 </menu>
