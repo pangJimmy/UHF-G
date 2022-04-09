@@ -253,7 +253,7 @@ public class SettingsFragment extends BaseFragment {
         err = uhfrManager.setRegion(workFreq);
         if (err == Reader.READER_ERR.MT_OK_ERR) {
             showToast(R.string.set_success);
-            sharedUtil.savePower(workFreq.value());
+            sharedUtil.saveWorkFreq(workFreq.value());
         } else {
             //5101 仅支持30db
             showToast(R.string.set_fail);
@@ -332,9 +332,17 @@ public class SettingsFragment extends BaseFragment {
         ButterKnife.bind(this, view);
         uhfrManager = UHFRManager.getInstance();
         initView();
+        Click();
         return view;
     }
 
+    void Click() {
+        buttonFreqQuery.performClick();
+        buttonQueryInventory.performClick();
+        buttonQuerySession.performClick();
+        buttonQueryInventory.performClick();
+        buttonQueryPower.performClick();
+    }
 
     private void initView() {
         arrayWorkFreq = mainActivity.getResources().getStringArray(R.array.work_freq);
