@@ -10,8 +10,8 @@ android {
         applicationId "com.pda.uhf_g"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.9"
+        versionCode 3
+        versionName "2.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

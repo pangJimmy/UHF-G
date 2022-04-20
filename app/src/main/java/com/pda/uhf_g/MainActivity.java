@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.Menu;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gg.reader.api.protocol.gx.MsgAppGetReaderInfo;
@@ -50,29 +52,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
     private SharedPreferences mSharedPreferences;
 
     public List<String> listEPC = new ArrayList<>();//epc数据
-    public static final int TAG_6C = 0 ;
-    public static final int TAG_6B = 1 ;
-    public static final int TAG_GB = 2 ;
-    public static final int TAG_GJB = 3 ;
-    public int tagType = 0 ; //标签类型
+
+    private TextView tvDeviceInfo ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        mSharedPreferences = this.getSharedPreferences("UHF", MODE_PRIVATE);
-        //初始化模块
-        initModule();
-        setScanKeyDisable() ;
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-
+        View view =  navigationView.getHeaderView(0);
+        tvDeviceInfo = view.findViewById(R.id.textView_deviceinfo) ;
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        mSharedPreferences = this.getSharedPreferences("UHF", MODE_PRIVATE);
+
+        //初始化模块
+        initModule();
+        setScanKeyDisable() ;
+
+
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 navController.getGraph())
                 .setDrawerLayout(drawer)
@@ -139,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
                 Toast.makeText(getApplicationContext(),"FreRegion:"+Reader.Region_Conf.valueOf(sharedUtil.getWorkFreq())+
                         "\n"+"Read Power:"+sharedUtil.getPower()+
                         "\n"+"Write Power:"+sharedUtil.getPower(),Toast.LENGTH_LONG).show();
+
             }else {
                 //5101 支持30db
                 Reader.READER_ERR err1 = mUhfrManager.setPower(30, 30);//set uhf module power
@@ -151,6 +153,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
                 }else {
                     Toast.makeText(this,getString(R.string.module_init_fail), Toast.LENGTH_SHORT).show();
                 }
+            }
+            String version = mUhfrManager.getHardware() ;
+            String strVer = this.getResources().getString(R.string.hardware);
+            if (version != null && version.length() > 0) {
+                version = String.format(strVer, version);
+                tvDeviceInfo.setText(version);
             }
         }else {
             Toast.makeText(this,getString(R.string.module_init_fail), Toast.LENGTH_SHORT).show();

@@ -106,6 +106,7 @@
     <string name="help">帮助</string>
     <string name="store">存储</string>
     <string name="export_excel_need_permission">导出excel所需权限</string>
+    <string name="hardware">固件版本:%s</string>
 
     <string-array name="work_freq">
         <item>中国1_920_925</item>

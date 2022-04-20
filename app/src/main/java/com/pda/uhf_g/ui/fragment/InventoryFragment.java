@@ -572,8 +572,8 @@ public class InventoryFragment extends BaseFragment {
                     case KeyEvent.KEYCODE_F2:
                         break;
                     case KeyEvent.KEYCODE_F5:
-                    case KeyEvent.KEYCODE_F3:
                         break;
+                    case KeyEvent.KEYCODE_F3://C510x
                     case KeyEvent.KEYCODE_F4://6100
                     case KeyEvent.KEYCODE_F7://H3100
                         invenroty();
