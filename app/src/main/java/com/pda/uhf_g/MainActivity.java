@@ -69,9 +69,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         mSharedPreferences = this.getSharedPreferences("UHF", MODE_PRIVATE);
 
-        //
-        initModule();
-        setScanKeyDisable() ;
+
 
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -92,6 +90,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //
+        initModule();
+        setScanKeyDisable() ;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        setScanKeyEnable();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        closeModule() ;
+    }
 
     private void setScanKeyDisable() {
         int currentApiVersion = Build.VERSION.SDK_INT;
@@ -174,8 +191,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        setScanKeyEnable();
-        closeModule() ;
+
     }
 
     @Override
