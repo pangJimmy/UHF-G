@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
 
     public boolean isConnectUHF  = false;
 
-    //扫描
+    //
     private ScanUtil scanUtil;
     public UHFRManager mUhfrManager;//uhf
     private SharedPreferences mSharedPreferences;
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         mSharedPreferences = this.getSharedPreferences("UHF", MODE_PRIVATE);
 
-        //初始化模块
+        //
         initModule();
         setScanKeyDisable() ;
 
@@ -86,15 +86,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
             @Override
             public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments)
             {
-                //目标Fragment
+                //Fragment
                 LogUtil.e("destination = " + destination.getNavigatorName());
             }
         });
     }
 
-    /**
-     * 设置扫描头按键不可用
-     */
+
     private void setScanKeyDisable() {
         int currentApiVersion = Build.VERSION.SDK_INT;
         if (currentApiVersion > Build.VERSION_CODES.N) {
@@ -106,9 +104,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
 
     }
 
-    /**
-     * 设置扫描头按键可用
-     */
+
     private void setScanKeyEnable() {
         int currentApiVersion = Build.VERSION.SDK_INT;
         if (currentApiVersion > Build.VERSION_CODES.N) {
@@ -135,14 +131,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
             Reader.READER_ERR err = mUhfrManager.setPower(sharedUtil.getPower(), sharedUtil.getPower());//set uhf module power
             if(err== Reader.READER_ERR.MT_OK_ERR){
                 isConnectUHF = true ;
-                //初始设置为北美902_928工作频率
+                //
                 mUhfrManager.setRegion(Reader.Region_Conf.valueOf(sharedUtil.getWorkFreq()));
                 Toast.makeText(getApplicationContext(),"FreRegion:"+Reader.Region_Conf.valueOf(sharedUtil.getWorkFreq())+
                         "\n"+"Read Power:"+sharedUtil.getPower()+
                         "\n"+"Write Power:"+sharedUtil.getPower(),Toast.LENGTH_LONG).show();
 
             }else {
-                //5101 支持30db
+                //5101 30db
                 Reader.READER_ERR err1 = mUhfrManager.setPower(30, 30);//set uhf module power
                 if(err1== Reader.READER_ERR.MT_OK_ERR) {
                     isConnectUHF = true ;
@@ -167,9 +163,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
 
 
 
-    /**
-     * 关闭UHF模块
-     */
+
     private void closeModule() {
         if (mUhfrManager != null) {//close uhf module
             mUhfrManager.close();
@@ -195,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
     long exitSytemTime = 0;
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        //按两次返回键退出程序
+
         if(keyCode == KeyEvent.KEYCODE_BACK){
             if(System.currentTimeMillis() - exitSytemTime > 2000){
                 Toast.makeText(getApplicationContext(), R.string.exit_app, Toast.LENGTH_SHORT).show();

@@ -35,7 +35,7 @@ public class ExcelUtil {
 
 
     /**
-     * 单元格的格式设置 字体大小 颜色 对齐方式、背景颜色等...
+
      */
     public static void format() {
         try {
@@ -63,7 +63,7 @@ public class ExcelUtil {
     }
 
     /**
-     * 初始化Excel
+
      *
      * @param fileName
      * @param colName
@@ -79,12 +79,12 @@ public class ExcelUtil {
             }
             workbook = Workbook.createWorkbook(file);
             WritableSheet sheet = workbook.createSheet(fileName, 0);
-            //创建标题栏
+            //
             sheet.addCell((WritableCell) new Label(0, 0, fileName, arial14format));
             for (int col = 0; col < colName.length; col++) {
                 sheet.addCell(new Label(col, 0, colName[col], arial10format));
             }
-            sheet.setRowView(0, 340); //设置行高
+            sheet.setRowView(0, 340); //
             workbook.write();
         } catch (Exception e) {
             e.printStackTrace();
@@ -117,12 +117,12 @@ public class ExcelUtil {
                     for (int i = 0; i < list.size(); i++) {
                         sheet.addCell(new Label(i, j + 1, list.get(i), arial12format));
                         if (list.get(i).length() <= 5) {
-                            sheet.setColumnView(i, list.get(i).length() + 8); //设置列宽
+                            sheet.setColumnView(i, list.get(i).length() + 8); //
                         } else {
-                            sheet.setColumnView(i, list.get(i).length() + 5); //设置列宽
+                            sheet.setColumnView(i, list.get(i).length() + 5); //
                         }
                     }
-                    sheet.setRowView(j + 1, 350); //设置行高
+                    sheet.setRowView(j + 1, 350); //
                 }
 
                 writebook.write();

@@ -86,7 +86,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
     public RecycleViewAdapter(List<TagInfo> list) {
         mTagList = list;
         nf.setMaximumFractionDigits(2);
-        // 如果不需要四舍五入，可以使用RoundingMode.DOWN
+        //
         nf.setRoundingMode(RoundingMode.DOWN);
     }
 

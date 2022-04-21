@@ -69,23 +69,19 @@ public class SettingsFragment extends BaseFragment {
     CheckBox checkBoxFastid;
 
     //    private SharedPreferences mSharedPreferences;
-    //工作频率
     private String[] arrayWorkFreq;
     //Session
     private String[] arraySession;
-    //输出功率
     private String[] arrayPower;
-    //Q值
     private String[] arrayQvalue;
-    //盘存AB面
     private String[] arrayInventoryType;
 
 
-    private Reader.Region_Conf workFreq;    //工作频率
-    private int power = 33; //输出功率
+    private Reader.Region_Conf workFreq;    //
+    private int power = 33; //
     private int session = 1; //session
-    private int qvalue = 1;//Q值
-    private int target = 0; //A|B面
+    private int qvalue = 1;//Q
+    private int target = 0; //A|B
     private UHFRManager uhfrManager;
     private MainActivity mainActivity;
 
@@ -96,9 +92,7 @@ public class SettingsFragment extends BaseFragment {
         // Required empty public constructor
     }
 
-    /**
-     * 查询工作频段
-     */
+
     @OnClick(R.id.button_query_work_freq)
     void queryFreq() {
         if (!mainActivity.isConnectUHF) {
@@ -110,19 +104,19 @@ public class SettingsFragment extends BaseFragment {
         LogUtil.e("workFraq = " + region.value());
 
         if (region == Reader.Region_Conf.RG_NA) {
-            //北美902_928
+            //902_928
             spinnerWorkFreq.setSelection(2);
             workFreqStr = arrayWorkFreq[2];
         } else if (region == Reader.Region_Conf.RG_PRC) {
-            //中国1_920_925
+            //_920_925
             spinnerWorkFreq.setSelection(0);
             workFreqStr = arrayWorkFreq[0];
         } else if (region == Reader.Region_Conf.RG_EU3) {
-            //欧洲865_867
+            //865_867
             spinnerWorkFreq.setSelection(3);
             workFreqStr = arrayWorkFreq[3];
         } else if (region == Reader.Region_Conf.RG_PRC2) {
-            //中国2_840_845
+            //2_840_845
             spinnerWorkFreq.setSelection(1);
             workFreqStr = arrayWorkFreq[1];
 
@@ -132,9 +126,7 @@ public class SettingsFragment extends BaseFragment {
 
     }
 
-    /**
-     * 查询输出功率
-     */
+
     @OnClick(R.id.button_query_power)
     void queryPower() {
         if (!mainActivity.isConnectUHF) {
@@ -151,9 +143,7 @@ public class SettingsFragment extends BaseFragment {
         }
     }
 
-    /**
-     * 查询session
-     */
+
     @OnClick(R.id.button_query_session)
     void querySession() {
         if (!mainActivity.isConnectUHF) {
@@ -171,9 +161,7 @@ public class SettingsFragment extends BaseFragment {
 
     }
 
-    /**
-     * 查询Q值
-     */
+
     @OnClick(R.id.button_query_qvalue)
     void queryQvalue() {
         if (!mainActivity.isConnectUHF) {
@@ -190,9 +178,7 @@ public class SettingsFragment extends BaseFragment {
         LogUtil.e("qvalue = " + qvalue);
     }
 
-    /***
-     * 查询温度
-     */
+
     @OnClick(R.id.button_query_temp)
     void queryTemp() {
         int temp = uhfrManager.getTemperature();
@@ -200,9 +186,7 @@ public class SettingsFragment extends BaseFragment {
 //        uhfrManager.get
     }
 
-    /**
-     * 查询盘存参数AB面
-     */
+
     @OnClick(R.id.button_query_inventory_type)
     void queryInventory() {
         if (!mainActivity.isConnectUHF) {
@@ -221,9 +205,7 @@ public class SettingsFragment extends BaseFragment {
     }
 
 
-    /**
-     * 设置输出功率
-     */
+
     @OnClick(R.id.button_set_power)
     void setPower() {
         if (!mainActivity.isConnectUHF) {
@@ -240,9 +222,7 @@ public class SettingsFragment extends BaseFragment {
         }
     }
 
-    /**
-     * 设置工作频率
-     */
+
     @OnClick(R.id.button_set_work_freq)
     void setWorkFreq() {
         if (!mainActivity.isConnectUHF) {
@@ -260,9 +240,7 @@ public class SettingsFragment extends BaseFragment {
         }
     }
 
-    /**
-     * 设置session
-     */
+
     @OnClick(R.id.button_set_session)
     void setSession() {
         if (!mainActivity.isConnectUHF) {
@@ -279,9 +257,7 @@ public class SettingsFragment extends BaseFragment {
     }
 
 
-    /**
-     * 设置Q值
-     */
+
     @OnClick(R.id.button_set_qvalue)
     void setQvalue() {
         if (!mainActivity.isConnectUHF) {
@@ -298,9 +274,7 @@ public class SettingsFragment extends BaseFragment {
     }
 
 
-    /**
-     * 设置Target
-     */
+
     @OnClick(R.id.button_set_inventory_type)
     void setTarget() {
         if (!mainActivity.isConnectUHF) {
@@ -352,7 +326,7 @@ public class SettingsFragment extends BaseFragment {
         arrayInventoryType = mainActivity.getResources().getStringArray(R.array.inventory_type_arrays);
 
         sharedUtil = new SharedUtil(mainActivity);
-        //获取保存的设置
+        //
         spinnerPower.setSelection(sharedUtil.getPower());
         int freq = sharedUtil.getWorkFreq();
 //        Log.e("zeng-","freq:"+freq);
@@ -370,26 +344,26 @@ public class SettingsFragment extends BaseFragment {
         spinnerInventoryType.setSelection(sharedUtil.getTarget());
 
 
-        //工作频率
+        //
         spinnerWorkFreq.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 //                String workFreqStr = arrayWorkFreq[position];
                 switch (position) {
                     case 0:
-                        //中国1_920_925
+                        //1_920_925
                         workFreq = Reader.Region_Conf.RG_PRC;
                         break;
                     case 1:
-                        //中国2_840_845
+                        //2_840_845
                         workFreq = Reader.Region_Conf.RG_PRC2;
                         break;
                     case 2:
-                        //北美_902_928
+                        //_902_928
                         workFreq = Reader.Region_Conf.RG_NA;
                         break;
                     case 3:
-                        //欧洲865_867
+                        //865_867
                         workFreq = Reader.Region_Conf.RG_EU3;
                         break;
 
@@ -401,7 +375,7 @@ public class SettingsFragment extends BaseFragment {
 
             }
         });
-        //输出功率
+        //
         spinnerPower.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -427,7 +401,7 @@ public class SettingsFragment extends BaseFragment {
             }
         });
 
-        //Q值
+        //Q
         spinnerQvalue.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {

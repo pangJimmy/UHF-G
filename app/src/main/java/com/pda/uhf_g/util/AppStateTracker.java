@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 
-//前后台切换管理
+//
 public class AppStateTracker {
 
     public static final int STATE_FOREGROUND = 0;

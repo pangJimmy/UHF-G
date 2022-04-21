@@ -28,10 +28,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pda.serialport.Tools;
 
-/**
- * 读、写、锁定、销毁操作
- *
- */
+
 public class ReadWriteTag extends BaseFragment {
 
 
@@ -89,9 +86,9 @@ public class ReadWriteTag extends BaseFragment {
     private boolean isEPCNULL = true ;
 
 
-    private final int UNLOCK = 0 ;//开放
-    private final int LOCK = 1 ;//锁定
-    private final int PERM_LOCK = 0 ;//永久锁定
+    private final int UNLOCK = 0 ;//
+    private final int LOCK = 1 ;//
+    private final int PERM_LOCK = 0 ;//
 
 
     Reader.Lock_Obj lock_obj = null;//lock bank
@@ -127,7 +124,7 @@ public class ReadWriteTag extends BaseFragment {
         spinnerEPC.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //选择需要操作的EPC
+
                 epcStr = mainActivity.listEPC.get(position);
             }
 
@@ -137,7 +134,7 @@ public class ReadWriteTag extends BaseFragment {
             }
         });
 
-        //数据区选择
+        //
         radioGroupMembank.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -145,7 +142,7 @@ public class ReadWriteTag extends BaseFragment {
                 switch (checkedId) {
                     case R.id.radioButton_epc:
                         membank = 1 ;
-                        //默认选择EPC区读取数据时从2开始读写
+
                         editTextStartAddr.setText("2");
                         break;
                     case R.id.radioButton_tid:
@@ -164,7 +161,7 @@ public class ReadWriteTag extends BaseFragment {
             }
         });
 
-        //锁定区选择
+        //
         spinnerLockData.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -195,7 +192,7 @@ public class ReadWriteTag extends BaseFragment {
             }
         });
 
-        //锁定类型选择
+        //
         spinnerLockType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -223,9 +220,7 @@ public class ReadWriteTag extends BaseFragment {
 
     }
 
-    /***
-     * 读数据
-     */
+
     @OnClick(R.id.button_read)
     void readData() {
         if(!checkParam(false)){
@@ -250,9 +245,7 @@ public class ReadWriteTag extends BaseFragment {
         }
     }
 
-    /**
-     * 写数据
-     */
+
     @OnClick(R.id.button_write)
     void write() {
         if(!checkParam(true)){

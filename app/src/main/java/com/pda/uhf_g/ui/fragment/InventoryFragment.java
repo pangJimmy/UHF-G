@@ -65,10 +65,7 @@ import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * 盘存界面，用于盘存6C/6B/GB/GJB标签
- * 模块固件版本说明：X.X.1.X表示通用版本（1或者3表示通用版本支持6c/b; 5表示GJB，6表示GB，7表示GJB和GB）
- */
+
 public class InventoryFragment extends BaseFragment {
 
 
@@ -100,11 +97,11 @@ public class InventoryFragment extends BaseFragment {
     ListView listViewEPC ;
 
     private EPCListViewAdapter epcListViewAdapter ;
-    private Map<String, TagInfo> tagInfoMap = new LinkedHashMap<String, TagInfo>();//去重数据源
-    private List<TagInfo> tagInfoList = new ArrayList<TagInfo>();//适配器所需数据源
+    private Map<String, TagInfo> tagInfoMap = new LinkedHashMap<String, TagInfo>();//
+    private List<TagInfo> tagInfoList = new ArrayList<TagInfo>();//
     private MainActivity mainActivity ;
     private int isCtesius = 0;
-    private Long index = 1l;//索引
+    private Long index = 1l;//
     private Handler mHandler = new Handler();
     private Handler soundHandler = new Handler();
     private Runnable timeTask = null;
@@ -113,7 +110,7 @@ public class InventoryFragment extends BaseFragment {
     private boolean isReader = false;
     private Timer timer ;
     private boolean isSound = true;
-    private boolean[] isChecked = new boolean[]{false, false, false};//标识读0-epc与1-user
+    private boolean[] isChecked = new boolean[]{false, false, false};//
     private SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
     private KeyReceiver keyReceiver;
 
@@ -125,7 +122,7 @@ public class InventoryFragment extends BaseFragment {
 
     private final int MSG_INVENROTY_TIME = 1001 ;
 
-    private long lastCount = 0 ;//用于计算速度
+    private long lastCount = 0 ;//
     private long speed = 0 ;
     private Handler handler = new Handler(){
         @Override
@@ -135,9 +132,9 @@ public class InventoryFragment extends BaseFragment {
             switch (msg.what) {
                 case MSG_INVENROTY:
 
-                    //总次数
+                    //
                     tvReadCount.setText("" + getReadCount(tagInfoList));
-                    //总标签数
+                    //
                     tvAllTag.setText("" + tagInfoList.size());
                     long currentCount =  getReadCount(tagInfoList);
                     speed = currentCount - lastCount ;
@@ -148,7 +145,7 @@ public class InventoryFragment extends BaseFragment {
                     break ;
 
                 case MSG_INVENROTY_TIME:
-                    //每秒刷新一次速度
+                    //
                     time++ ;
                     tvTime.setText(secToTime(time) + "s" );
                     break ;
@@ -158,7 +155,7 @@ public class InventoryFragment extends BaseFragment {
 
 
 
-    //初始化面板
+    //
     private void initPane() {
         index = 1l;
         time = 0;
@@ -175,7 +172,7 @@ public class InventoryFragment extends BaseFragment {
 
 
 
-    //获取读取总次数
+    //
     private long getReadCount(List<TagInfo> tagInfoList) {
         long readCount = 0;
         for (int i = 0; i < tagInfoList.size(); i++) {
@@ -201,7 +198,7 @@ public class InventoryFragment extends BaseFragment {
         super.onResume();
         Log.e("pang", "onResume()");
         mUhfrManager.setCancleInventoryFilter();
-        //注册按键
+        //
         registerKeyCodeReceiver();
         //getModuleInfo() ;
     }
@@ -211,7 +208,7 @@ public class InventoryFragment extends BaseFragment {
         super.onPause();
         Log.e("pang", "onPause()");
         stopInventory();
-        //注销按键监听
+        //
         mainActivity.unregisterReceiver(keyReceiver);
     }
 
@@ -221,19 +218,19 @@ public class InventoryFragment extends BaseFragment {
 
     }
 
-    //盘存线程
+
     private Runnable invenrotyThread = new Runnable() {
         @Override
         public void run() {
             LogUtil.e("invenrotyThread is running");
             List<Reader.TAGINFO> listTag = null;
-            //6C标签
-                //多标签盘存
+            //6C
+                //
                 if (isMulti) {
                     listTag = mUhfrManager.tagInventoryRealTime();
                 }else{
                     if (checkBoxTid.isChecked()) {
-                        //盘存时带TID
+                        //
                         listTag = mUhfrManager.tagEpcTidInventoryByTimer((short) 50) ;
                     }else{
                         listTag = mUhfrManager.tagInventoryByTimer((short) 50); ;
@@ -241,26 +238,26 @@ public class InventoryFragment extends BaseFragment {
                 }
             if (listTag == null) {
                 LogUtil.e("listTag = null");
-                //多标签状态重置
+                //
                 if(checkBoxMultiTag.isChecked()){
                     mUhfrManager.asyncStopReading();
                     mUhfrManager.asyncStartReading();
                 }
             }
-                //盘存列表
+                //
                 if (listTag != null && !listTag.isEmpty()) {
                     LogUtil.e("inventory listTag size = " + listTag.size());
 //                    if (!checkBoxLoop.isChecked()) {
-                        //单次盘存，不用另外线程播放声音
+                        //
                         UtilSound.play(1, 0);
 //                    }
                     for (Reader.TAGINFO taginfo : listTag) {
 
-                        //去除重复的EPC号
+                        //
                         Map<String, TagInfo> infoMap = pooled6cData(taginfo);
                         tagInfoList.clear();
                         tagInfoList.addAll(infoMap.values());
-                        //将EPC数据作为全局变量
+                        //
                         mainActivity.listEPC.clear();
                         mainActivity.listEPC.addAll(infoMap.keySet());
 
@@ -269,10 +266,10 @@ public class InventoryFragment extends BaseFragment {
                     handler.sendEmptyMessage(MSG_INVENROTY);
 
                 }else{
-                    //更新速率
+                    //
                     speed = 0 ;
                 }
-            //是否连续盘存
+            //
             if (checkBoxLoop.isChecked()) {
                 handler.postDelayed(invenrotyThread, 0) ;
             }else{
@@ -290,7 +287,7 @@ public class InventoryFragment extends BaseFragment {
 
 
 
-    //去重6C
+
     public Map<String, TagInfo> pooled6cData(Reader.TAGINFO info) {
         String epcAndTid = Tools.Bytes2HexString(info.EpcId, info.EpcId.length)
                  ;
@@ -325,14 +322,14 @@ public class InventoryFragment extends BaseFragment {
 
 
 
-    /***清除***/
+
     @OnClick(R.id.button_clean)
     public void clear() {
         initPane();
         mainActivity.listEPC.clear();
     }
 
-    /***盘存EPC***/
+
     @OnClick(R.id.button_inventory)
     public void invenroty() {
         //操作之前判定模块是否正常初始化
@@ -348,9 +345,7 @@ public class InventoryFragment extends BaseFragment {
 
     }
 
-    /**
-     * 盘存期间其他勾选设置为不可用
-     */
+
     private void setEnabled(boolean isEnable) {
         checkBoxLoop.setEnabled(isEnable);
         checkBoxLoop.setEnabled(isEnable);
@@ -363,25 +358,25 @@ public class InventoryFragment extends BaseFragment {
 
 
 
-    /***盘存EPC***/
+
     private void inventoryEPC() {
         isReader = true ;
-        speed = 0 ;//初始清零
+        speed = 0 ;//
         if (checkBoxLoop.isChecked()) {
-            //连续盘存
+            //
             btnInventory.setText(R.string.stop_inventory);
             setEnabled(false) ;
             soundTask();
         }
         showToast(R.string.start_inventory);
-        //设置盘存模式是否为多标签模式
+        //
         mUhfrManager.setGen2session(isMulti);
         if (isMulti) {
             mUhfrManager.asyncStartReading() ;
 
         }
 
-        //启动计时,每秒发一次
+
         if (timer == null) {
             timer = new Timer();
             timer.schedule(new TimerTask() {
@@ -396,7 +391,7 @@ public class InventoryFragment extends BaseFragment {
         handler.postDelayed(invenrotyThread, 0);
     }
 
-    /**停止盘存**/
+
     private void stopInventory()  {
         if (mainActivity.isConnectUHF) {
             if(isReader){
@@ -425,7 +420,7 @@ public class InventoryFragment extends BaseFragment {
 
 
 
-    //格式化时间
+    //
     public String secToTime(long time) {
         formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
         time = time * 1000;
@@ -434,11 +429,7 @@ public class InventoryFragment extends BaseFragment {
     }
 
 
-    /**
-     * 将数据集合 转化成ArrayList<ArrayList<String>>
-     *
-     * @return
-     */
+
     private ArrayList<ArrayList<String>> getRecordData(List<TagInfo> infos) {
         ArrayList<ArrayList<String>> recordList = new ArrayList<>();
         for (int i = 0; i < infos.size(); i++) {
@@ -525,7 +516,7 @@ public class InventoryFragment extends BaseFragment {
         mUhfrManager = UHFRManager.getInstance();
         initView();
         LogUtil.e("onCreateView()");
-        //初始化声音池
+        //
         UtilSound.initSoundPool(mainActivity);
         return view;
     }
@@ -542,7 +533,7 @@ public class InventoryFragment extends BaseFragment {
     }
 
 
-    /**注册按键监听**/
+
     private void registerKeyCodeReceiver() {
         keyReceiver = new KeyReceiver();
         IntentFilter filter = new IntentFilter();
@@ -552,7 +543,7 @@ public class InventoryFragment extends BaseFragment {
     }
 
 
-    //按键广播接收
+    //
     private class KeyReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -591,7 +582,7 @@ public class InventoryFragment extends BaseFragment {
         }
     } ;
 
-    //提示音线程
+    //
     private void soundTask() {
         soundTask = new Runnable() {
             @Override

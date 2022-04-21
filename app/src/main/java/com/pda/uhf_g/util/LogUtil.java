@@ -1,7 +1,7 @@
 package com.pda.uhf_g.util;
 
 import android.util.Log;
-/***日志工具类**/
+
 public class LogUtil {
     private static boolean isDebug = true ;
 
