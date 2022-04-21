@@ -63,9 +63,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
         setSupportActionBar(toolbar);
 
         mSharedPreferences = this.getSharedPreferences("UHF", MODE_PRIVATE);
-        //初始化模块
-        initModule();
-        setScanKeyDisable() ;
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -90,6 +87,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
             }
         });
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //初始化模块
+        initModule();
+        setScanKeyDisable() ;
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        setScanKeyEnable();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        closeModule() ;
+    }
+
 
     /**
      * 设置扫描头按键不可用
@@ -172,8 +191,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        setScanKeyEnable();
-        closeModule() ;
+
     }
 
     @Override

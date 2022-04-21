@@ -428,7 +428,7 @@ public class InventoryFragment extends BaseFragment {
         } else {
             TagInfo tag = new TagInfo();
             tag.setIndex(index);
-            tag.setType("GB");
+            tag.setType("GJB");
             tag.setEpc(info.getEpc());
             tag.setCount(1l);
             tag.setUserData(info.getUserdata());
