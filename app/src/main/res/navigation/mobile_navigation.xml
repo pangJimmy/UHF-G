@@ -38,4 +38,10 @@
         android:name="com.pda.uhf_g.ui.fragment.HelpFragment"
         android:label="@string/help"
         tools:layout="@layout/fragment_help" />
+
+    <fragment
+        android:id="@+id/nav_about"
+        android:name="com.pda.uhf_g.ui.fragment.AboutFragment"
+        android:label="@string/about"
+        tools:layout="@layout/fragment_about" />
 </navigation>

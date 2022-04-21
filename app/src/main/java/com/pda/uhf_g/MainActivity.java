@@ -167,12 +167,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
                     Toast.makeText(this,getString(R.string.module_init_fail), Toast.LENGTH_SHORT).show();
                 }
             }
-            String version = mUhfrManager.getHardware() ;
-            String strVer = this.getResources().getString(R.string.hardware);
-            if (version != null && version.length() > 0) {
-                version = String.format(strVer, version);
-                tvDeviceInfo.setText(version);
-            }
+
         }else {
             Toast.makeText(this,getString(R.string.module_init_fail), Toast.LENGTH_SHORT).show();
         }

@@ -106,15 +106,23 @@
     <string name="help">help</string>
     <string name="store">store</string>
     <string name="export_excel_need_permission">Permissions required for exporting Excel</string>
-    <string name="hardware">Firmware version:%s</string>
+    <string name="firmware">Firmware version:%s</string>
+    <string name="soft_version">Soft version:%s</string>
+    <string name="version_date">Date:%s</string>
+    <string name="about">About</string>
+    <string name="help_tips">
 
+
+    </string>
+
+
+    <!---->
     <string-array name="work_freq">
         <item>China1_920_925</item>
         <item>China2_840_845</item>
         <item>FCC_902_928</item>
         <item>EU_865_867</item>
     </string-array>
-
 
     <!---->
     <string-array name="lock_data">
@@ -125,14 +133,14 @@
         <item>USER</item>
     </string-array>
 
-    <!---->
+    <!--session-->
     <string-array name="lock_type">
         <item>Open</item>
         <item>Lock</item>
         <item>Permanent lock</item>
     </string-array>
 
-    <!--session-->
+    <!---->
     <string-array name="session_arrays">
         <item>S0</item>
         <item>S1</item>
@@ -167,6 +175,7 @@
         <item>15</item>
 
     </string-array>
+
 
     <!---->
     <string-array name="power_arrays">
@@ -206,7 +215,6 @@
         <item>33</item>
     </string-array>
 
-
     <!---->
     <string-array name="gb_membank">
         <item></item>
@@ -229,8 +237,8 @@
         <item>User15</item>
     </string-array>
 
-    <!---->
-    <string-array name="gb_lock_type" >
+
+    <string-array name="gb_lock_type">
         <item>1</item>
         <item></item>
         <item></item>
@@ -239,9 +247,4 @@
         <item></item>
         <item></item>
     </string-array>
-
-
-    <string name="help_tips" >
-
-    </string>
 </resources>
