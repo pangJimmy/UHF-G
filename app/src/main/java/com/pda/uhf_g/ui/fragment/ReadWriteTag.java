@@ -106,7 +106,7 @@ public class ReadWriteTag extends BaseFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_read_write_tag, container, false) ;
         ButterKnife.bind(this, view);
-        mUhfrManager = UHFRManager.getInstance();
+//        mainActivity.mUhfrManager = UHFRManager.getInstance();
 
         initView();
         return view;
@@ -233,9 +233,9 @@ public class ReadWriteTag extends BaseFragment {
 
         if (checkBoxFilter.isChecked()) {
             //fbank: 1 epc,2 tid ,3 user, 一般使用EPC过滤即选择对应的EPC号的标签进行读写
-            readData = mUhfrManager.getTagDataByFilter(membank, startAddr, len, accessPassword, (short) 1000, epc, 1, 2, true);
+            readData = mainActivity.mUhfrManager.getTagDataByFilter(membank, startAddr, len, accessPassword, (short) 1000, epc, 1, 2, true);
         }else{
-            er = mUhfrManager.getTagData(membank, startAddr, len, readData, accessPassword, (short) 1000);
+            er = mainActivity.mUhfrManager.getTagData(membank, startAddr, len, readData, accessPassword, (short) 1000);
         }
 
         if(er== Reader.READER_ERR.MT_OK_ERR && readData!=null){
@@ -262,9 +262,9 @@ public class ReadWriteTag extends BaseFragment {
         LogUtil.e("membank = " + membank + ", startAddr = " + startAddr  + ", access = "  +  accessPassword);
         if (checkBoxFilter.isChecked()){
             //fbank: 1 epc,2 tid ,3 user, 一般使用EPC过滤即选择对应的EPC号的标签进行读写
-            er = mUhfrManager.writeTagDataByFilter((char)membank,startAddr,writeDataBytes,writeDataBytes.length,accessPassword,(short)1000,epc,1,2,true);
+            er = mainActivity.mUhfrManager.writeTagDataByFilter((char)membank,startAddr,writeDataBytes,writeDataBytes.length,accessPassword,(short)1000,epc,1,2,true);
         }else{
-            er = mUhfrManager.writeTagData((char)membank,startAddr,writeDataBytes,writeDataBytes.length,accessPassword,(short)1000);
+            er = mainActivity.mUhfrManager.writeTagData((char)membank,startAddr,writeDataBytes,writeDataBytes.length,accessPassword,(short)1000);
         }
         if(er== Reader.READER_ERR.MT_OK_ERR ){
             //写入成功
@@ -312,9 +312,9 @@ public class ReadWriteTag extends BaseFragment {
         Reader.READER_ERR er ;
         if (checkBoxFilter.isChecked()){
             //fbank: 1 epc,2 tid ,3 user, 一般使用EPC过滤即选择对应的EPC号的标签进行读写, 起始地址为1
-            er = mUhfrManager.writeTagEPCByFilter(writeDataBytes,accessPassword,(short)1000,epc,1,2,true);
+            er = mainActivity.mUhfrManager.writeTagEPCByFilter(writeDataBytes,accessPassword,(short)1000,epc,1,2,true);
         }else{
-            er = mUhfrManager.writeTagEPC(writeDataBytes,accessPassword,(short)1000);
+            er = mainActivity.mUhfrManager.writeTagEPC(writeDataBytes,accessPassword,(short)1000);
         }
         if(er== Reader.READER_ERR.MT_OK_ERR ){
             //写入成功
@@ -354,9 +354,9 @@ public class ReadWriteTag extends BaseFragment {
 
         if (checkBoxFilter.isChecked())
             //fbank: 1 epc,2 tid ,3 user, 一般使用EPC过滤即选择对应的EPC号的标签进行读写
-            er  = mUhfrManager.lockTagByFilter(lock_obj,lock_type,accessPassword,(short)1000,epc,1,2,true);
+            er  = mainActivity.mUhfrManager.lockTagByFilter(lock_obj,lock_type,accessPassword,(short)1000,epc,1,2,true);
         else
-            er  = mUhfrManager.lockTag(lock_obj,lock_type,accessPassword,(short)1000);
+            er  = mainActivity.mUhfrManager.lockTag(lock_obj,lock_type,accessPassword,(short)1000);
         if (er== Reader.READER_ERR.MT_OK_ERR) {
             showToast("Lock Success!");
 //			editTips.append("Lock Success!" + "\n");
@@ -449,9 +449,9 @@ public class ReadWriteTag extends BaseFragment {
         Reader.READER_ERR er ;
         //kill tag
         if (checkBoxFilter.isChecked())
-            er= mUhfrManager.killTagByFilter(killPassword,(short) 1000,epc,1,2,true);
+            er= mainActivity.mUhfrManager.killTagByFilter(killPassword,(short) 1000,epc,1,2,true);
         else
-            er = mUhfrManager.killTag(killPassword,(short) 1000);
+            er = mainActivity.mUhfrManager.killTag(killPassword,(short) 1000);
         if(er == Reader.READER_ERR.MT_OK_ERR) {
             showToast(R.string.kill_success);
             //editTips.append(selectEPC + getResources().getString(R.string.kill) + getResources().getString(R.string.success)+"\n");

@@ -100,7 +100,7 @@ public class SettingsFragment extends BaseFragment {
             return;
         }
         String workFreqStr = "";
-        Reader.Region_Conf region = uhfrManager.getRegion();
+        Reader.Region_Conf region = mainActivity.mUhfrManager.getRegion();
         LogUtil.e("workFraq = " + region.value());
 
         if (region == Reader.Region_Conf.RG_NA) {
@@ -133,7 +133,7 @@ public class SettingsFragment extends BaseFragment {
             showToast(R.string.communication_timeout);
             return;
         }
-        int[] powerArray = uhfrManager.getPower();
+        int[] powerArray = mainActivity.mUhfrManager.getPower();
         if (powerArray != null && powerArray.length > 0) {
             LogUtil.e("powerArray = " + powerArray[0]);
             spinnerPower.setSelection(powerArray[0]);
@@ -150,7 +150,7 @@ public class SettingsFragment extends BaseFragment {
             showToast(R.string.communication_timeout);
             return;
         }
-        int session = uhfrManager.getGen2session();
+        int session = mainActivity.mUhfrManager.getGen2session();
         if (session != -1) {
             spinnerSession.setSelection(session);
             showToast("Session" + session);
@@ -168,7 +168,7 @@ public class SettingsFragment extends BaseFragment {
             showToast(R.string.communication_timeout);
             return;
         }
-        int qvalue = uhfrManager.getQvalue();
+        int qvalue = mainActivity.mUhfrManager.getQvalue();
         if (qvalue != -1) {
             spinnerQvalue.setSelection((qvalue ));
             showToast("Q = " + qvalue);
@@ -181,7 +181,7 @@ public class SettingsFragment extends BaseFragment {
 
     @OnClick(R.id.button_query_temp)
     void queryTemp() {
-        int temp = uhfrManager.getTemperature();
+//        int temp = mainActivity.mUhfrManager.getTemperature();
 //        LogUtil.e("temp = " + temp) ;
 //        uhfrManager.get
     }
@@ -193,7 +193,7 @@ public class SettingsFragment extends BaseFragment {
             showToast(R.string.communication_timeout);
             return;
         }
-        target = uhfrManager.getTarget();
+        target = mainActivity.mUhfrManager.getTarget();
         LogUtil.e("Target = " + target);
         if (target != -1) {
             spinnerInventoryType.setSelection(target);
@@ -212,7 +212,7 @@ public class SettingsFragment extends BaseFragment {
             showToast(R.string.communication_timeout);
             return;
         }
-        err = uhfrManager.setPower(power, power);
+        err = mainActivity.mUhfrManager.setPower(power, power);
         if (err == Reader.READER_ERR.MT_OK_ERR) {
             showToast(R.string.set_success);
             sharedUtil.savePower(power);
@@ -230,7 +230,7 @@ public class SettingsFragment extends BaseFragment {
             return;
         }
         Log.e("zeng-","setworkFraq:"+workFreq);
-        err = uhfrManager.setRegion(workFreq);
+        err = mainActivity.mUhfrManager.setRegion(workFreq);
         if (err == Reader.READER_ERR.MT_OK_ERR) {
             showToast(R.string.set_success);
             sharedUtil.saveWorkFreq(workFreq.value());
@@ -247,7 +247,7 @@ public class SettingsFragment extends BaseFragment {
             showToast(R.string.communication_timeout);
             return;
         }
-        boolean flag = uhfrManager.setGen2session(session);
+        boolean flag = mainActivity.mUhfrManager.setGen2session(session);
         if (flag) {
             showToast(R.string.set_success);
             sharedUtil.saveSession(session);
@@ -264,7 +264,7 @@ public class SettingsFragment extends BaseFragment {
             showToast(R.string.communication_timeout);
             return;
         }
-        boolean flag = uhfrManager.setQvaule(qvalue);
+        boolean flag = mainActivity.mUhfrManager.setQvaule(qvalue);
         if (flag) {
             showToast(R.string.set_success);
             sharedUtil.saveQvalue(qvalue);
@@ -281,7 +281,7 @@ public class SettingsFragment extends BaseFragment {
             showToast(R.string.communication_timeout);
             return;
         }
-        boolean flag = uhfrManager.setTarget(target);
+        boolean flag = mainActivity.mUhfrManager.setTarget(target);
         Log.e("zeng -", "setTarget:" + target);
         if (flag) {
             showToast(R.string.set_success);
@@ -304,7 +304,7 @@ public class SettingsFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
         ButterKnife.bind(this, view);
-        uhfrManager = UHFRManager.getInstance();
+//        mainActivity.mUhfrManager = UHFRManager.getInstance();
         initView();
         Click();
         return view;

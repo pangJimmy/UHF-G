@@ -50,6 +50,7 @@ import com.pda.uhf_g.util.CheckCommunication;
 import com.pda.uhf_g.util.ExcelUtil;
 import com.pda.uhf_g.util.GlobalClient;
 import com.pda.uhf_g.util.LogUtil;
+import com.pda.uhf_g.util.SharedUtil;
 import com.pda.uhf_g.util.UtilSound;
 import com.uhf.api.cls.Reader;
 
@@ -114,6 +115,7 @@ public class InventoryFragment extends BaseFragment {
     private SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
     private KeyReceiver keyReceiver;
 
+    SharedUtil sharedUtil ;
     private boolean isMulti = false;// multi mode flag
 
     public UHFRManager mUhfrManager;//uhf
@@ -197,7 +199,9 @@ public class InventoryFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         Log.e("pang", "onResume()");
-        mUhfrManager.setCancleInventoryFilter();
+        if (mainActivity.mUhfrManager != null) {
+            mainActivity.mUhfrManager.setCancleInventoryFilter();
+        }
         //
         registerKeyCodeReceiver();
         //getModuleInfo() ;
@@ -227,21 +231,21 @@ public class InventoryFragment extends BaseFragment {
             //6C
                 //
                 if (isMulti) {
-                    listTag = mUhfrManager.tagInventoryRealTime();
+                    listTag = mainActivity.mUhfrManager.tagInventoryRealTime();
                 }else{
                     if (checkBoxTid.isChecked()) {
                         //
-                        listTag = mUhfrManager.tagEpcTidInventoryByTimer((short) 50) ;
+                        listTag = mainActivity.mUhfrManager.tagEpcTidInventoryByTimer((short) 50) ;
                     }else{
-                        listTag = mUhfrManager.tagInventoryByTimer((short) 50); ;
+                        listTag = mainActivity.mUhfrManager.tagInventoryByTimer((short) 50); ;
                     }
                 }
             if (listTag == null) {
                 LogUtil.e("listTag = null");
                 //
                 if(checkBoxMultiTag.isChecked()){
-                    mUhfrManager.asyncStopReading();
-                    mUhfrManager.asyncStartReading();
+                    mainActivity.mUhfrManager.asyncStopReading();
+                    mainActivity.mUhfrManager.asyncStartReading();
                 }
             }
                 //
@@ -333,7 +337,7 @@ public class InventoryFragment extends BaseFragment {
     @OnClick(R.id.button_inventory)
     public void invenroty() {
         //操作之前判定模块是否正常初始化
-        if(!mainActivity.isConnectUHF){
+        if(mainActivity.mUhfrManager == null){
             showToast(R.string.communication_timeout);
             return ;
         }
@@ -370,9 +374,9 @@ public class InventoryFragment extends BaseFragment {
         }
         showToast(R.string.start_inventory);
         //
-        mUhfrManager.setGen2session(isMulti);
+        mainActivity.mUhfrManager.setGen2session(isMulti);
         if (isMulti) {
-            mUhfrManager.asyncStartReading() ;
+            mainActivity.mUhfrManager.asyncStartReading() ;
 
         }
 
@@ -396,7 +400,7 @@ public class InventoryFragment extends BaseFragment {
         if (mainActivity.isConnectUHF) {
             if(isReader){
                 if (checkBoxMultiTag.isChecked()) {
-                    mUhfrManager.asyncStopReading();
+                    mainActivity.mUhfrManager.asyncStopReading();
                 }
                 handler.removeCallbacks(invenrotyThread);
                 soundHandler.removeCallbacks(soundTask);
@@ -513,9 +517,10 @@ public class InventoryFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_inventory, container, false) ;
         ButterKnife.bind(this, view);
-        mUhfrManager = UHFRManager.getInstance();
+//        mainActivity.mUhfrManager = UHFRManager.getInstance();
         initView();
         LogUtil.e("onCreateView()");
+        sharedUtil = new SharedUtil(mainActivity);
         //
         UtilSound.initSoundPool(mainActivity);
         return view;
