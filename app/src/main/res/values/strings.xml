@@ -32,11 +32,11 @@
     <string name="type_6b">6B</string>
     <string name="type_gb">GB</string>
     <string name="type_gjb">GJB</string>
-    <string name="all_tags">Tag Count:</string>
+    <string name="all_tags">Tag:</string>
     <string name="speed">Speed:</string>
     <string name="time">Time:</string>
-    <string name="start_inventory">Start inventory</string>
-    <string name="stop_inventory">Stop inventory</string>
+    <string name="start_inventory">Start</string>
+    <string name="stop_inventory">Stop</string>
     <string name="cus_read">Cus read</string>
     <string name="excel_export">Excel export</string>
     <string name="clean">Clean</string>

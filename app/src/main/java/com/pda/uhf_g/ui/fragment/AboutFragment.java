@@ -41,7 +41,8 @@ public class AboutFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_about, null);
         ButterKnife.bind(this, view);
-        uhfrManager = UHFRManager.getInstance();
+        mainActivity = (MainActivity) getActivity();
+        uhfrManager = mainActivity.mUhfrManager;
 
         initView();
 
@@ -49,18 +50,19 @@ public class AboutFragment extends BaseFragment {
     }
 
     private void initView() {
-        String version = uhfrManager.getHardware() ;
-        String strVer = this.getResources().getString(R.string.firmware);
-        String strSoft = this.getResources().getString(R.string.soft_version);
-        String strDate = this.getResources().getString(R.string.version_date);
-        strSoft = String.format(strSoft, "2.2.2");
-        strDate = String.format(strDate, "2022-04-21");
-        if (version != null && version.length() > 0) {
-            version = String.format(strVer, version);
-            textViewFirmware.setText(version);
+        if (mainActivity.isConnectUHF) {
+            String version = uhfrManager.getHardware() ;
+            String strVer = this.getResources().getString(R.string.firmware);
+            String strSoft = this.getResources().getString(R.string.soft_version);
+            String strDate = this.getResources().getString(R.string.version_date);
+            strSoft = String.format(strSoft, "2.2.2");
+            strDate = String.format(strDate, "2022-04-21");
+            if (version != null && version.length() > 0) {
+                version = String.format(strVer, version);
+                textViewFirmware.setText(version);
+            }
+            textViewSoft.setText(strSoft);
+            textViewDate.setText(strDate);
         }
-        textViewSoft.setText(strSoft);
-        textViewDate.setText(strDate);
-
     }
 }
