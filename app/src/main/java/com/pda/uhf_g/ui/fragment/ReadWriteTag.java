@@ -81,7 +81,7 @@ public class ReadWriteTag extends BaseFragment {
     private UHFRManager mUhfrManager;
     private MainActivity mainActivity;
     private String epcStr = null ;
-    private int membank ;
+    private int membank = 3;
     private int startAddr ;
     private int len ;
     private byte[] accessPassword ;
