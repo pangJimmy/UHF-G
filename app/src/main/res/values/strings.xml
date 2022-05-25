@@ -91,6 +91,7 @@
     <string name="work_freq">Region:</string>
     <string name="power">Power:</string>
     <string name="temperature">temperature:</string>
+    <string name="temp">temp</string>
     <string name="inventory_settings">Inventory setting</string>
 
     <string name="query">query</string>
@@ -113,8 +114,17 @@
     <string name="help_tips">
 
 
-    </string>
 
+    </string>
+    <string name="manufacturer">Manufacturer:</string>
+    <string name="temp_tag">Temperature tag</string>
+    <string name="stop_read">Stop read</string>
+
+
+    <string-array name="temp_manufacturer">
+        <item>Yuehe tag</item>
+        <item>Yilian tag</item>
+    </string-array>
 
     <!---->
     <string-array name="work_freq">

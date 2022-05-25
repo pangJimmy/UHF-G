@@ -91,6 +91,7 @@
     <string name="work_freq">工作频段:</string>
     <string name="power">输出功率:</string>
     <string name="temperature">温度:</string>
+    <string name="temp">温度</string>
     <string name="inventory_settings">查询参数设置</string>
 
     <string name="query">查询</string>
@@ -110,6 +111,15 @@
     <string name="soft_version">软件版本号:%s</string>
     <string name="version_date">修改日期:%s</string>
     <string name="about">关于</string>
+
+    <string name="manufacturer">标签厂家:</string>
+    <string name="temp_tag">温度标签</string>
+    <string name="stop_read">停止读取</string>
+
+    <string-array name="temp_manufacturer">
+        <item>悦和标签</item>
+        <item>宜链标签</item>
+    </string-array>
 
     <string-array name="work_freq">
         <item>中国1_920_925</item>

@@ -33,6 +33,13 @@
         android:name="com.pda.uhf_g.ui.fragment.SettingsFragment"
         android:label="@string/settings"
         tools:layout="@layout/fragment_settings" />
+<!---->
+    <fragment
+        android:id="@+id/nav_temp"
+        android:name="com.pda.uhf_g.ui.fragment.TemperatureTagFragment"
+        android:label="@string/temperature"
+        tools:layout="@layout/fragment_temperature_tag" />
+
     <fragment
         android:id="@+id/nav_help"
         android:name="com.pda.uhf_g.ui.fragment.HelpFragment"

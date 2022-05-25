@@ -25,6 +25,11 @@
             android:id="@+id/nav_setting"
             android:icon="@drawable/ic_settings"
             android:title="@string/settings" />
+        <!---->
+        <item
+            android:id="@+id/nav_temp"
+            android:icon="@drawable/ic_tag"
+            android:title="@string/temp_tag" />
         <item
             android:id="@+id/nav_help"
             android:icon="@drawable/ic_freq_settings"
