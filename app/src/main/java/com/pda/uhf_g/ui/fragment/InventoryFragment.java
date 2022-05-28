@@ -35,6 +35,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.gg.reader.api.protocol.gx.LogBase6bInfo;
 import com.gg.reader.api.protocol.gx.LogBaseGJbInfo;
 import com.gg.reader.api.protocol.gx.LogBaseGbInfo;
 import com.handheld.uhfr.UHFRManager;
@@ -309,6 +310,21 @@ public class InventoryFragment extends BaseFragment {
                     }
                     handler.sendEmptyMessage(MSG_INVENROTY);
                 }
+            } else if (radioButton6B.isChecked()) {
+                //6B标签
+                List<LogBase6bInfo> list6BTag = mUhfrManager.inventory6BTag((short) 20);
+                if (list6BTag != null && list6BTag.size() > 0) {
+                    for (LogBase6bInfo tag6b : list6BTag) {
+                        Map<String, TagInfo> infoMap = pooled6bData(tag6b);
+                        tagInfoList.clear();
+                        tagInfoList.addAll(infoMap.values());
+                        //将EPC数据作为全局变量
+                        mainActivity.listEPC.clear();
+                        mainActivity.listEPC.addAll(infoMap.keySet());
+                    }
+                    handler.sendEmptyMessage(MSG_INVENROTY);
+                }
+
             }
 
 
@@ -357,31 +373,32 @@ public class InventoryFragment extends BaseFragment {
         return tagInfoMap;
     }
 //
-//    //去重6B
-//    public Map<String, TagInfo> pooled6bData(LogBase6bInfo info) {
-//        if (tagInfoMap.containsKey(info.getTid())) {
-//            TagInfo tagInfo = tagInfoMap.get(info.getTid());
-//            Long count = tagInfoMap.get(info.getTid()).getCount();
-//            count++;
-//            tagInfo.setRssi(info.getRssi() + "");
-//            tagInfo.setCount(count);
-//            tagInfoMap.put(info.getTid(), tagInfo);
-//        } else {
-//            TagInfo tag = new TagInfo();
-//            tag.setIndex(index);
-//            tag.setType("6B");
-//            tag.setCount(1l);
-//            tag.setUserData(info.getUserdata());
-//            if (info.getTid() != null) {
-//                tag.setTid(info.getTid());
-//            }
-//            tag.setRssi(info.getRssi() + "");
-//            tagInfoMap.put(info.getTid(), tag);
-//            index++;
-//        }
-////        handlerStop.sendEmptyMessage(2);
-//        return tagInfoMap;
-//    }
+    //去重6B
+    public Map<String, TagInfo> pooled6bData(LogBase6bInfo info) {
+        if (tagInfoMap.containsKey(info.getTid())) {
+            TagInfo tagInfo = tagInfoMap.get(info.getTid());
+            Long count = tagInfoMap.get(info.getTid()).getCount();
+            count++;
+            tagInfo.setRssi(info.getRssi() + "");
+            tagInfo.setCount(count);
+            tagInfoMap.put(info.getTid(), tagInfo);
+        } else {
+            TagInfo tag = new TagInfo();
+            tag.setIndex(index);
+            tag.setType("6B");
+            tag.setCount(1l);
+            tag.setUserData(info.getUserdata());
+            if (info.getTid() != null) {
+                tag.setTid(info.getTid());
+            }
+            tag.setEpc(info.getTid());
+            tag.setRssi(info.getRssi() + "");
+            tagInfoMap.put(info.getTid(), tag);
+            index++;
+        }
+//        handlerStop.sendEmptyMessage(2);
+        return tagInfoMap;
+    }
 //
 //    //去重GB
     public Map<String, TagInfo> pooledGbData(LogBaseGbInfo info) {
@@ -528,10 +545,11 @@ public class InventoryFragment extends BaseFragment {
             inventory6C() ;
         }else if(radioGroup.getCheckedRadioButtonId() == R.id.type_b){
             //盘存6B标签
+            inventory6BGB();
         } else if (radioGroup.getCheckedRadioButtonId() == R.id.type_gb
                 || radioGroup.getCheckedRadioButtonId() == R.id.type_gjb) {
             //盘存国标标签或者国军标
-            inventoryGB();
+            inventory6BGB();
         }
     }
 
@@ -573,7 +591,7 @@ public class InventoryFragment extends BaseFragment {
     }
 
     /***盘存国标标签**/
-    private void inventoryGB() {
+    private void inventory6BGB() {
         if (checkBoxLoop.isChecked()) {
             //连续盘存
             btnInventory.setText(R.string.stop_inventory);
@@ -783,15 +801,23 @@ public class InventoryFragment extends BaseFragment {
                 switch (radioGroup.getCheckedRadioButtonId()){
                     case R.id.type_c:
                         mainActivity.tagType = mainActivity.TAG_6C ;
+                        checkBoxMultiTag.setEnabled(true);
+                        checkBoxTid.setEnabled(true);
                         break;
                     case R.id.type_b:
                         mainActivity.tagType = mainActivity.TAG_6B ;
+                        checkBoxMultiTag.setEnabled(false);
+                        checkBoxTid.setEnabled(false);
                         break;
                     case R.id.type_gb:
                         mainActivity.tagType = mainActivity.TAG_GB ;
+                        checkBoxMultiTag.setEnabled(true);
+                        checkBoxTid.setEnabled(true);
                         break;
                     case R.id.type_gjb:
                         mainActivity.tagType = mainActivity.TAG_GJB ;
+                        checkBoxMultiTag.setEnabled(true);
+                        checkBoxTid.setEnabled(true);
                         break;
 
                 }

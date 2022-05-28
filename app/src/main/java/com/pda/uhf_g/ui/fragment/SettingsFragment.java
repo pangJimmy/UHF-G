@@ -195,7 +195,7 @@ public class SettingsFragment extends BaseFragment {
      */
     @OnClick(R.id.button_query_temp)
     void queryTemp() {
-        int temp = uhfrManager.getTemperature();
+//        int temp = uhfrManager.getTemperature();
 //        LogUtil.e("temp = " + temp) ;
 //        uhfrManager.get
     }

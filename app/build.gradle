@@ -10,8 +10,8 @@ android {
         applicationId "com.pda.uhf_g"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.5.2"
+        versionCode 3
+        versionName "1.5.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -49,7 +49,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation files('libs\\reader.jar')
     implementation files('libs\\ModuleAPI_J.jar')
-    implementation files('libs\\UHF67_v1.0.2.jar')
+    implementation files('libs\\UHF67_v1.0.3.jar')
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
